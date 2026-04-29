@@ -35,11 +35,12 @@ export function About() {
           variants={item}
           className="text-foreground/90 mt-6 text-lg leading-relaxed md:text-xl"
         >
-          I&apos;m a CS undergrad at BITS Pilani working on AI engineering. My
-          focus sits at the intersection of LLM applications, retrieval-augmented
-          pipelines, and agentic systems — the tooling layer that turns raw
-          models into reliable products. I care about evaluation rigor,
-          developer ergonomics, and shipping things that hold up outside a demo.
+          I&apos;m a CS undergrad at BITS Pilani working on AI engineering. 
+          I build the layer between raw language models and working products: 
+          pipelines that retrieve the right context, agents that take actions, 
+          and tooling that makes the whole thing reliable. 
+          I care about testing things properly, making systems easy to work with, 
+          and shipping stuff that holds up in the real world.
         </motion.p>
       </motion.div>
     </section>

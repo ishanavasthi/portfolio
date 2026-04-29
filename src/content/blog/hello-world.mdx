@@ -1,0 +1,30 @@
+---
+title: "Hello, world"
+date: "2026-04-30"
+summary: "Kicking off the blog — what to expect here, and why I'm writing it."
+---
+
+This is the first post on the blog. The pipeline reads MDX from
+`src/content/blog/*.mdx`, parses the frontmatter with `gray-matter`, and
+renders the body through `next-mdx-remote/rsc` inside a Tailwind `prose`
+container scoped to the dark theme.
+
+## What I'll write about
+
+- LLM application architecture and the unglamorous plumbing around it
+- RAG pipelines that survive contact with real corpora
+- Agentic systems, evaluation, and developer tooling
+
+## A code sample
+
+```ts
+export function greet(name: string): string {
+  return `hello, ${name}`;
+}
+```
+
+> Inline `code`, **bold**, _italics_, and [links](https://example.com) all
+> route through the same `prose` styles, so layout stays consistent across
+> posts.
+
+That's it for the placeholder. Replace this file with real writing.
