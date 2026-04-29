@@ -16,7 +16,7 @@ const item: Variants = {
 
 export function About() {
   return (
-    <section id="about" className="px-4 py-24 md:px-6 md:py-32">
+    <section id="about" className="px-4 py-12 md:px-6 md:py-16">
       <motion.div
         variants={container}
         initial="hidden"

@@ -26,7 +26,7 @@ const item: Variants = {
 
 export function Hero() {
   return (
-    <section className="px-4 py-24 md:px-6 md:py-32">
+    <section className="px-4 pt-24 pb-12 md:px-6 md:pt-32 md:pb-16">
       <motion.div
         variants={container}
         initial="hidden"
@@ -35,7 +35,7 @@ export function Hero() {
       >
         <motion.h1
           variants={item}
-          className="text-foreground text-5xl font-semibold tracking-tight md:text-7xl"
+          className="text-foreground text-5xl font-semibold tracking-[-0.01em] md:text-7xl"
         >
           {site.name}
         </motion.h1>

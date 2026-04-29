@@ -49,13 +49,13 @@ function ProjectCard({ project }: { project: Project }) {
     <motion.div variants={item} className="group">
       <Card
         className={cn(
-          "relative h-full gap-4 border-border bg-[--surface] py-5 shadow-none transition-all duration-300",
+          "relative h-full gap-4 border-[--border] bg-[--surface] py-5 shadow-none transition-all duration-300",
           "hover:-translate-y-0.5 hover:border-[--accent]/60",
-          "hover:shadow-[0_0_0_1px_rgb(110_231_183/0.25),0_8px_32px_-12px_rgb(110_231_183/0.18)]",
+          "hover:shadow-[0_0_0_1px_color-mix(in_oklab,var(--accent)_25%,transparent),0_8px_32px_-12px_color-mix(in_oklab,var(--accent)_18%,transparent)]",
         )}
       >
         <CardHeader className="flex-row items-start justify-between gap-4">
-          <CardTitle className="text-foreground group-hover:text-[--accent] text-base font-semibold tracking-tight transition-colors">
+          <CardTitle className="text-foreground group-hover:text-[--accent] text-base font-semibold tracking-[-0.01em] transition-colors">
             {project.name}
           </CardTitle>
           <div className="flex items-center gap-0.5">
@@ -95,7 +95,7 @@ function ProjectCard({ project }: { project: Project }) {
 
 export function Projects() {
   return (
-    <section id="projects" className="px-4 py-24 md:px-6 md:py-32">
+    <section id="projects" className="px-4 py-12 md:px-6 md:py-16">
       <motion.div
         variants={container}
         initial="hidden"

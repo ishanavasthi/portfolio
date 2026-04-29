@@ -50,7 +50,7 @@ export default async function BlogPostPage({
         </Link>
 
         <header className="mt-10">
-          <h1 className="text-foreground text-3xl font-semibold tracking-tight md:text-4xl">
+          <h1 className="text-foreground text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
             {post.title}
           </h1>
           <div className="text-muted-foreground mt-4 flex items-center gap-3 font-mono text-xs">
@@ -62,7 +62,7 @@ export default async function BlogPostPage({
 
         <div
           className="prose prose-invert prose-neutral mt-12 max-w-none
-            prose-headings:tracking-tight prose-headings:font-semibold
+            prose-headings:tracking-[-0.01em] prose-headings:font-semibold
             prose-h1:text-3xl prose-h2:text-xl prose-h3:text-lg
             prose-p:leading-relaxed prose-p:text-foreground/85
             prose-a:text-[--accent] prose-a:no-underline hover:prose-a:underline

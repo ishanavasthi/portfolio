@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts, formatPostDate } from "@/lib/blog";
+import { BackLink } from "@/components/layout/back-link";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -13,10 +14,11 @@ export default function BlogIndexPage() {
   return (
     <section className="px-4 py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-3xl">
-        <p className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
+        <BackLink />
+        <p className="text-muted-foreground mt-10 font-mono text-xs tracking-widest uppercase">
           Blog
         </p>
-        <h1 className="text-foreground mt-3 text-3xl font-semibold tracking-tight md:text-4xl">
+        <h1 className="text-foreground mt-3 text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
           Writing
         </h1>
 
@@ -33,7 +35,7 @@ export default function BlogIndexPage() {
                   className="group block py-6 transition-colors"
                 >
                   <div className="flex items-baseline justify-between gap-6">
-                    <h2 className="text-foreground group-hover:text-[--accent] text-lg font-medium tracking-tight transition-colors">
+                    <h2 className="text-foreground group-hover:text-[--accent] text-lg font-medium tracking-[-0.01em] transition-colors">
                       {post.title}
                     </h2>
                     <time

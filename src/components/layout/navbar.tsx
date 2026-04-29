@@ -29,12 +29,12 @@ export function Navbar() {
 
   return (
     <motion.header
-      initial={{ opacity: 0, y: -8 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/70 backdrop-blur-md"
+      className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background"
     >
-      <nav className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 md:px-6">
+      <nav className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4 md:px-6">
         <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}>
           <Link
             href="/"
