@@ -21,7 +21,7 @@ export const projects: readonly Project[] = [
     github: "https://github.com/ishanavasthi/ChatWithPDF",
   },
   {
-    name: "RecruitEnv — RL Candidate Triage Environment",
+    name: "RecruitEnv - RL Candidate Triage Environment",
     description: "Built OpenEnv-compliant RL environment simulating AI-driven candidate screening across difficulty levels.",
     tech: ["Python", "FastAPI", "NumPy", "Docker", "Pytest"],
     github: "https://github.com/ishanavasthi/recruit-env",

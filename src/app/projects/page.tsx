@@ -4,7 +4,7 @@ import { BackLink } from "@/components/layout/back-link";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: "Selected work — LLM systems, agentic tooling, and more.",
+  description: "Selected work - LLM systems, agentic tooling, and more.",
 };
 
 export default function ProjectsPage() {

@@ -24,7 +24,7 @@ export default function BlogIndexPage() {
 
         {posts.length === 0 ? (
           <p className="text-muted-foreground mt-12 text-sm">
-            No posts yet — check back soon.
+            No posts yet - check back soon.
           </p>
         ) : (
           <ul className="border-border/60 mt-12 divide-y divide-[--border]">
