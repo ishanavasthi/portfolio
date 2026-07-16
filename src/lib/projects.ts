@@ -8,9 +8,15 @@ export type Project = {
 
 export const projects: readonly Project[] = [
   {
+    name: "AgentGrid: Autonomous Multi-Agent Coding Pipeline",
+    description: "Built a multi-agent coding pipeline powered by 9 Gemini agents that takes a software issue from report to tested, merged pull request with zero human intervention. Enables true agent collaboration, conflict resolution, and context-preserving handoffs across specialized agents (Planner, Coder, Reviewer, Integrator, Tester, Publisher) with a live dashboard and support for voice intake, adversarial testing, and computer-use visual verification.",
+    tech: ["Python", "Gemini API", "google-genai", "stdlib http.server", "SSE", "subprocess/git", "threading", "concurrent.futures", "argparse", "Playwright", "HTML/CSS/JS", "WAV/PNG (stdlib)"],
+    github: "https://github.com/ishanavasthi/agentgrid",
+  },
+  {
     name: "AlphaDesk: Multi-Agent Equity Research System",
     description: "Built a full-stack multi-agent research platform that automates Indian stock analysis with LangGraph, live NSE market data, RAG over financial filings, human approval checkpoints, and a real-time research dashboard.",
-    tech: ["LangGraph", "Next.js", "FastAPI", "ChromaDB", "ONNX", "LangSmith"],
+    tech: ["LangGraph", "Next.js", "TypeScript", "FastAPI", "ChromaDB", "ONNX", "LangSmith"],
     github: "https://github.com/ishanavasthi/alphadesk",
     live: "https://link.ishanavasthi.in/alphadesk",
   },
@@ -35,11 +41,11 @@ export const projects: readonly Project[] = [
     github: "https://github.com/ishanavasthi/swiggy-claw",
     live: "https://link.ishanavasthi.in/swiggy-claw",
   },
-  {
-    name: "Code Review Agent",
-    description: "Built a GitHub App that autonomously reviews pull requests using LLMs and posts structured feedback directly on PRs.",
-    tech: ["TypeScript", "Node.js", "Express.js", "Octokit", "Docker", "GitHub Actions", "Gemini API"],
-    github: "https://github.com/ishanavasthi/pr-review-bot",
-    // live: "https://example.com",
-  },
+  // {
+  //   name: "Code Review Agent",
+  //   description: "Built a GitHub App that autonomously reviews pull requests using LLMs and posts structured feedback directly on PRs.",
+  //   tech: ["TypeScript", "Node.js", "Express.js", "Octokit", "Docker", "GitHub Actions", "Gemini API"],
+  //   github: "https://github.com/ishanavasthi/pr-review-bot",
+  //   // live: "https://example.com",
+  // },
 ] as const;
