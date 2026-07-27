@@ -12,6 +12,7 @@ export const projects: readonly Project[] = [
     description: "Built a multi-agent coding pipeline powered by 9 Gemini agents that takes a software issue from report to tested, merged pull request with zero human intervention. Enables true agent collaboration, conflict resolution, and context-preserving handoffs across specialized agents (Planner, Coder, Reviewer, Integrator, Tester, Publisher) with a live dashboard and support for voice intake, adversarial testing, and computer-use visual verification.",
     tech: ["Python", "Gemini API", "google-genai", "stdlib http.server", "SSE", "subprocess/git", "threading", "concurrent.futures", "argparse", "Playwright", "HTML/CSS/JS", "WAV/PNG (stdlib)"],
     github: "https://github.com/ishanavasthi/agentgrid",
+    live: "https://link.ishanavasthi.in/agentgrid-demo-video",
   },
   {
     name: "AlphaDesk: Multi-Agent Equity Research System",
