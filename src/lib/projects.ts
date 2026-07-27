@@ -8,8 +8,15 @@ export type Project = {
 
 export const projects: readonly Project[] = [
   {
+    name: "ClinicFlow: AI Healthcare Receptionist",
+    description: "Built a real-time AI voice agent that answers patient calls, runs intake, books appointments, and routes callers, with a live operator dashboard. Combines a barge-in capable LiveKit pipeline with auditable LLM function tools and deterministic guardrails so the agent never invents facts or skips steps.",
+    tech: ["Python", "LiveKit", "Deepgram STT", "Groq", "Numik TTS", "FastAPI", "SQLModel", "SQLite", "Next.js", "TypeScript"],
+    github: "https://github.com/ishanavasthi/clinicflow",
+    live: "https://link.ishanavasthi.in/clinicflow-video",
+  },
+  {
     name: "AgentGrid: Autonomous Multi-Agent Coding Pipeline",
-    description: "Built a multi-agent coding pipeline powered by 9 Gemini agents that takes a software issue from report to tested, merged pull request with zero human intervention. Enables true agent collaboration, conflict resolution, and context-preserving handoffs across specialized agents (Planner, Coder, Reviewer, Integrator, Tester, Publisher) with a live dashboard and support for voice intake, adversarial testing, and computer-use visual verification.",
+    description: "Built a coding pipeline of 9 Gemini agents that takes a software issue from report to tested, merged pull request with zero human intervention. Specialized agents (Planner, Coder, Reviewer, Integrator, Tester, Publisher) collaborate through context-preserving handoffs and conflict resolution, backed by a live dashboard.",
     tech: ["Python", "Gemini API", "google-genai", "stdlib http.server", "SSE", "subprocess/git", "threading", "concurrent.futures", "argparse", "Playwright", "HTML/CSS/JS", "WAV/PNG (stdlib)"],
     github: "https://github.com/ishanavasthi/agentgrid",
     live: "https://link.ishanavasthi.in/agentgrid-demo-video",

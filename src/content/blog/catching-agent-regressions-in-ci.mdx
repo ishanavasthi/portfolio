@@ -1,0 +1,648 @@
+---
+title: "Your agent got 3x more expensive and every test still passed"
+date: "2026-07-27"
+summary: "Building a CI gate for AI agents, with SigNoz as the datastore rather than a dashboard on the side. Every bug that mattered was silent, and five separate green lights meant nothing."
+---
+
+Here is a pull request. It changes nine lines of a system prompt — something
+about being more thorough before answering. The unit tests pass. Coverage is
+unchanged. Lint is clean. You would approve it.
+
+It also makes the agent cost **150% more per task**, take **twice as many
+retrieval hops**, and start calling a tool it has never touched before.
+
+None of that is in the diff, and none of it is in your CI. The code did not
+change shape — same functions, same signatures, same assertions. What changed is
+*behaviour*, and behaviour is not something a test suite has an opinion about
+unless you build one.
+
+You find out in next month's invoice. Or in a latency alert at 2am, twenty pull
+requests later, when nobody remembers which one did it.
+
+So I built the thing that catches it. What follows is the engineering, and the
+through-line turned out to be sharper than the product: **almost every bug in
+this project was silent, and five separate times a green light meant nothing.**
+Building a tool to catch invisible regressions is an unusually good way to
+discover how much of your own feedback is fake.
+
+## What it does
+
+Preflight is a CI check for agent behaviour. On every pull request it runs a
+six-case golden suite against both the merge base and the PR head, compares six
+metrics, and blocks the PR if any of them regressed past a committed threshold.
+
+```
+pull request opened
+      |
+      +-- foundryctl cast ......... SigNoz, stood up inside the CI job
+      +-- git merge-base .......... resolve the baseline SHA
+      |
+      |      suite @ merge-base            suite @ PR head
+      |          6 cases                       6 cases
+      |             \                             /
+      |              \      OTLP/HTTP :4318      /
+      |               +------------+------------+
+      |                            |
+      |                            v
+      |                     +--------------+
+      |                     |    SigNoz    |
+      |                     +------+-------+
+      |                            |  POST /api/v5/query_range
+      |                            v
+      |                     +--------------+
+      +-------------------->|   the gate   |
+                            +------+-------+
+                                   |
+        exit 0  clean ............ |  ..... sticky PR comment, green
+        exit 1  metric breached .. |  ..... sticky PR comment, red, blocked
+        exit 2  ingest timed out . |  ..... "the gate could not run"
+        exit 3  nothing to compare  |  ..... "the gate could not run"
+```
+
+Exit 1 and exit 3 being different codes is not fussiness. A gate that cannot run
+must never render as a gate that failed — an expired baseline showing up in CI as
+"your agent regressed" burns a team's trust in the check faster than any false
+negative. Every path that produces no report synthesises one, because silence in
+CI is exactly how a broken gate goes unnoticed, which is the failure mode this
+whole thing exists to prevent.
+
+The comment it posts:
+
+```
+                          baseline    candidate       delta    threshold
+  FAIL  Cost / task        $0.0026      $0.0064    +150.5%         +25%
+  FAIL  Tokens / task        2,034        4,670    +129.7%         +25%
+  FAIL  p95 latency          3.18s        8.51s    +167.4%         +75%
+  FAIL  Tool calls / task     1.33            3    +125.0%         +40%
+  FAIL  Retrieval hops        1.00         2.33    +133.3%         +50%
+  ok    Success rate          100%         100%          -   drop > 1pt
+
+  Biggest mover: damaged-item moved $0.0070 (+5,100 tokens, +3 tool calls)
+```
+
+Every row deep-links to that case's trace waterfall.
+
+## The bet: SigNoz is the datastore, not a dashboard on the side
+
+The obvious design is: run the agent, write results to a JSON file, compare
+against a stored baseline, fail the build. That works, and it is boring, and it
+throws away the most interesting property of the problem.
+
+Agent runs are already *traces*. A task is a root span, each model call is a
+child, each tool call is a child of that. If you are going to instrument the
+agent anyway — and you are, because you will want to debug it — then the trace
+store already contains everything the gate needs. Writing a second, parallel
+record into a JSON file is duplication that will drift, and the day the dashboard
+and the PR comment disagree in front of a reviewer is the day the gate is
+finished.
+
+So: **there is no local results file.** Every number in that comment came back
+out of `POST /api/v5/query_range`. If SigNoz cannot answer, the gate fails loudly
+rather than guessing.
+
+That rested on one question I could not answer from the docs: *can the query API
+aggregate and group by a custom span attribute?* Not a resource attribute, not a
+well-known field — an arbitrary `eval.case_id` I invented. If the answer was no,
+the design was dead and I needed to know in the first hour, not the fifth. It was
+the first thing I built, ahead of anything that looked like a feature.
+
+It is yes:
+
+```jsonc
+"aggregations": [{ "expression": "sum(preflight.cost_usd)" }],
+"filter":       { "expression": "attribute.vcs.commit_sha = '59607e52'" },
+"groupBy":      [{ "name": "eval.case_id", "fieldContext": "attribute" }]
+```
+
+One row per case, per commit, in a single round trip. Everything else follows
+from that being true.
+
+## What the data looks like
+
+Spans are hand-rolled against the OpenTelemetry GenAI semantic conventions rather
+than emitted by an auto-instrumentation library. That is more code, on purpose:
+the gate reads spans back *by attribute name*, so the names have to be exactly
+the spec's rather than whatever a library decided to call them. Every
+`gen_ai.*` attribute in use is at Development stability in the spec, and I said
+so in the README rather than hoping nobody checked.
+
+One case, as a trace:
+
+```
+eval.case  damaged-item                                8530 ms
+├─ retrieve  policy-kb                     (grounding hop)
+├─ chat  claude-haiku-4-5                             1425 ms
+│     gen_ai.usage.input_tokens = 1904
+│     preflight.cost_usd = 0.00121
+├─ execute_tool  policy_search
+│  └─ retrieve  policy-kb
+├─ chat  claude-haiku-4-5                             1088 ms
+├─ execute_tool  lookup_order
+├─ chat  claude-haiku-4-5                             1116 ms
+├─ execute_tool  check_inventory
+├─ chat  claude-haiku-4-5                             1278 ms
+├─ execute_tool  policy_search
+│  └─ retrieve  policy-kb
+└─ chat  claude-haiku-4-5                             3622 ms
+```
+
+Cost is computed inside the LLM span on exit, from a price table committed
+alongside the thresholds, so `preflight.cost_usd` and the token attributes can
+never disagree with each other. `policy_search` nests a retrieval span, so
+reaching for it costs a hop — which is what makes "retrieval hops per task" a
+real behavioural metric rather than a proxy.
+
+The whole system is about six moving parts:
+
+```
+agent/reference.py ......... tool-calling loop, claude-haiku-4-5
+preflight/instrument.py .... case / llm / tool / retrieval spans
+preflight/otel.py .......... OTLP exporters: traces, metrics AND logs
+          |
+          |  :4318
+          v
+    S i g N o z    (deployed by Foundry from a committed casting.yaml)
+          |
+          +-- /api/v5/query_range ---> preflight/query.py
+          |                                  |
+          |                            contracts.RunSummary
+          |                                  |
+          |                            preflight/differ.py  ---> exit code
+          |                                  |
+          |                            preflight/report.py  ---> PR comment
+          |
+          +-- MCP server :8000 ------> scripts/signoz_apply.py  (dashboards, alerts)
+                                       preflight/diagnose.py    (the explainer)
+```
+
+The metric arithmetic lives in exactly one place — a `RunSummary.metric()` on the
+shared contract, not in the differ. The gate and the renderer cannot disagree
+about what "cost per task" means, because there is one implementation of it.
+
+## The regression, seen twice
+
+The seeded regression is a prompt edit. Not a code change — the agent's
+*instructions*, in English:
+
+```diff
+- "Use the tools to check facts before answering.
+-  Answer in at most two sentences."
+
++ "Work strictly one step at a time and call exactly one tool per step.
++  First call policy_search for the general rule. Then call lookup_order
++  for the order. Then call check_inventory for the SKU you found on that
++  order. Then call policy_search once more for the specific rule that
++  applies to that item's status. Only after all four steps, enumerate
++  every option available to the customer with its trade-offs."
+```
+
+And here is the same test case before and after, as SigNoz renders it:
+
+```
+  baseline  e0592cf8                candidate  59607e52
+  5 spans, 2.18 s                   13 spans, 8.53 s
+
+  eval.case damaged-item            eval.case damaged-item
+  ├─ retrieve policy-kb             ├─ retrieve policy-kb
+  ├─ chat                           ├─ chat
+  ├─ execute_tool lookup_order      ├─ execute_tool policy_search    <- new
+  └─ chat                           ├─ retrieve policy-kb            <- new
+                                    ├─ chat
+                                    ├─ execute_tool lookup_order
+                                    ├─ chat
+                                    ├─ execute_tool check_inventory  <- new
+                                    ├─ chat
+                                    ├─ execute_tool policy_search    <- new
+                                    ├─ retrieve policy-kb            <- new
+                                    └─ chat
+```
+
+Read the prompt, then read the trace. `policy_search`, `lookup_order`,
+`check_inventory`, `policy_search` again — the waterfall is literally the four
+steps the instructions asked for, in order. Cause in the diff, effect in the
+trace, and the connection needs no explaining.
+
+## What actually inflates agent cost
+
+This is the most portable thing I learned building it, and it took three failed
+attempts to see.
+
+My first two seeded regressions asked the model to be more thorough. "Enumerate
+every option." "Check every relevant tool, one per step." Both landed at
+**+16 to +18% tokens** — squarely in the "15%, not 3x" range that makes for a
+demo nobody believes. The obvious read was that the prompt edit was too weak.
+
+It wasn't. The model was **batching its tool calls into a single parallel turn**.
+More tools, same number of turns, input context re-sent the same number of times.
+Verbosity is cheap.
+
+What actually moved the number was a **dependency chain**: call `policy_search`,
+then `lookup_order`, then `check_inventory` *for the SKU you found on that
+order*. Each tool's input requires the previous tool's output, which forces
+genuinely sequential turns — and each turn re-sends a growing transcript.
+Result: +130% tokens, +133% retrieval hops, +150% cost.
+
+> **Turn count is the multiplier. Output length is rounding error.** If you are
+> reasoning about what an agent costs, count the round trips, not the words.
+
+There is a second half to this, and it nearly cost me the finding. Before I saw
+the batching, I had set `MAX_MODEL_TURNS = 3`. The cap was truncating the
+trajectory, clipping a longer-running agent back into looking like the baseline.
+Raising the ceiling to 5 changed nothing for the baseline — every case still
+terminated on `end_turn` in two calls, every cassette still hit — and let the
+regression show its real size. **Check the instrument before concluding the
+effect is small.**
+
+## Reading the query API
+
+Four things about `/api/v5/query_range` that cost me time and are not obvious
+from a first read of the docs.
+
+**Aggregation aliases are not echoed back.** You send an `alias`, and the
+response ignores it. Columns come back as `__result_0`, `__result_1`, … in the
+order the aggregations were requested. Group-by columns are named after the
+attribute and marked `columnType: "group"`. Rows are nested at
+`data.data.results[].data` as *positional lists* — not under an `aggregations[]`
+key, which is what I had assumed and built a parser against. The flattener has to
+re-attach aliases by aggregation index.
+
+**Traces and metrics have entirely different response shapes.** Traces come back
+as `results[].columns[]` plus positional `results[].data[]`. Metrics come back as
+`results[].aggregations[].series[].values[]`. A helper written for one silently
+returns an empty list when pointed at the other — which downstream reads as *no
+data*, which reads as *no regression*.
+
+**An unqualified attribute name resolves to the resource attribute, not the span
+attribute.** `vcs.commit_sha = 'abc'` matched zero spans while
+`attribute.vcs.commit_sha = 'abc'` matched forty-two, because the resource is
+stamped once per process. In ordinary CI — one process, one commit — the two
+values agree and the bug is invisible. It only surfaces when they diverge.
+`groupBy` is immune because it demands an explicit `fieldContext`, which is
+exactly why my first probe looked fine and gave me false confidence. Qualify
+every filter.
+
+**`max(timestamp)` works and returns epoch seconds; string intrinsics cannot be
+aggregated at all.** That first fact is load-bearing: resolving a commit SHA to
+its most recent run is one scalar query grouped by run id, aggregating `count()`
+and `max(timestamp)` — no bisection over time windows. But `any()` is not a
+recognised function, and `max(trace_id)` makes ClickHouse try to cast hex to
+Float64 and fail. Trace ids have to come out through a `fieldContext: "span"`
+group-by instead.
+
+## A query that scanned 48,527 rows and returned none
+
+The run-level metrics were the hardest read path in the project, and the shape of
+the failure is worth the space.
+
+Six OpenTelemetry histograms are emitted per case on the same dimensions as the
+spans. Every `signal: "metrics"` query I tried returned zero rows — the base
+name, `.sum`, `.bucket`, with and without cumulative temporality, across several
+space-aggregation values — while the data was plainly visible in ClickHouse.
+
+Two separate things were going on.
+
+**First, a histogram does not exist under its own name.** SigNoz asks about the
+metric and gets back a message as unambiguous as error messages get:
+
+```
+metric preflight.case.cost_usd has never been received.
+Check the metric name and instrumentation
+```
+
+The instrumentation was fine. On ingest a histogram is decomposed into
+`preflight.case.cost_usd.sum`, `.count`, `.bucket`, `.min`, `.max` — and the base
+name exists as *nothing at all*. That warning reads as a verdict about your
+exporter, and the obvious response is to go rewrite working code. It is actually
+a statement about a name.
+
+**Second, and the real blocker: letting the backend auto-detect the metric type
+routes you down a dead end.** SigNoz catalogues these as
+`Histogram / Cumulative / isMonotonic`, and a query that auto-fetches that
+metadata takes a histogram-percentile path which returns zero rows *while still
+scanning 48,527 of them*. The scan count is the tell. Pinning every inferred
+parameter explicitly is what fixes it:
+
+```
+metricName:        preflight.case.cost_usd.sum   # the suffixed series, not the base
+metricType:        gauge                          # explicit; do NOT let it auto-fetch
+timeAggregation:   max                            # explicit
+spaceAggregation:  sum
+```
+
+Cross-checked against the trace-derived total for the same commit: **$0.0769 both
+ways**, exactly.
+
+> `rowsScanned > 0` with an empty result set means the filter matched and the
+> *aggregation* threw everything away. That is a completely different bug from
+> `rowsScanned == 0`, and the two are indistinguishable if you only look at the
+> row count.
+
+And then the dashboards read traces anyway, which is worth being honest about.
+Cracking the metrics path did not change the design: the gate reads traces, so a
+trace-backed dashboard cannot disagree with the PR comment, while a metrics-backed
+one can. Trace aggregation also has no temporality or bucket-alignment subtleties.
+Solving a blocker and then deliberately not depending on it is a legitimate
+outcome.
+
+## Every bug that mattered was silent
+
+Not one of the real bugs threw an exception. Every one of them returned a
+plausible number.
+
+**A percentage of a near-zero number is not information.** The first end-to-end
+run reported a +205% latency regression between two *identical* runs, because the
+cases took 0.12ms. A gate that cries wolf gets switched off by the third engineer
+who hits it. Latency now has to clear an absolute floor as well as a percentage,
+and it is the only metric with a near-zero regime, so it is the only one with a
+floor.
+
+That is also why the thresholds are measured rather than guessed. Running the
+real suite twice under two different SHAs and diffing it gives **0.0% on cost,
+tokens, tool calls and hops** — replay makes those exact — and **0.2% on latency**.
+The thresholds sit at 25–75%, which is over 100x the measured noise, and they are
+sized for *re-recorded* cassettes rather than for that 0%.
+
+**A reader's default lookback window silently truncated valid diffs.** The
+summary reader defaulted to sixty minutes; the SHA resolver would happily find a
+baseline run from yesterday. The result was not an error, it was "baseline run
+has no cases" — which reads like a completely different problem.
+
+**A field that looks like an idempotency key, and isn't.** SigNoz dashboards
+carry a top-level `name`. Posting the identical payload twice creates *two*
+dashboards with the same name and different UUIDs. So the apply script reconciles
+rather than upserts: list, match on name, update in place by id, delete stale
+duplicates. Inside that one, a smaller and nastier version:
+`signoz_list_alert_rules` returns the rule UUID as `ruleId`, while
+`signoz_create_alert` returns it as `id` and `signoz_update_alert` expects `id`.
+Reading `id` off a listing yields nothing; the update then targets nothing and
+**still reports success**. I only caught it because a debug print showed a null id
+next to a rule that was demonstrably firing.
+
+**A test double that is faithful in the wrong dimension.** The cassette cache
+replayed tokens and content perfectly and dropped latency on the floor — replayed
+cases finished in ~0.2ms. Tokens and cost were exact, so the cache looked
+correct, and `p95_latency_ms` had quietly become a random number generator:
+ordinary sub-millisecond jitter is a +150% swing against any threshold anyone
+would pick. That is the "gate is flaky, so the team switches it off" failure
+arriving *through the component built to make the gate stable*. The fix is to
+record the provider's wall time in the cassette and sleep it on replay.
+
+Offline fixture tests caught none of these. A single run against real SigNoz
+caught all of them. Fixtures test the code you wrote; these were all bugs in the
+code I *thought* I had written.
+
+## Five green lights that meant nothing
+
+SigNoz is a single-page app behind a catch-all route. **Every** unmatched path
+returns HTTP 200 with the same HTML shell. That one fact manufactured a false
+positive five separate times, in five different disguises.
+
+1. **The auth API.** The documented `/api/v1/login` and `/api/v1/pats` no longer
+   exist. They fall through to the catch-all, so a client that checks the status
+   code sees success and then dies on JSON parse. The real surface is
+   `POST /api/v2/sessions/email_password`, which needs an org id. A related trap
+   one layer down: service-account keys start with **zero** permissions, so a
+   fresh key authenticates perfectly and then returns `authz_forbidden` on every
+   call until a role is attached.
+
+2. **The trace deep links.** `/trace/deadbeef` and `/trace/this-is-not-a-trace`
+   both return 200. A status-code check would have "verified" a URL format that
+   was entirely wrong. The real check is the request the page makes to render
+   itself — `POST /api/v4/traces/:id/waterfall`, asserting a non-empty span list,
+   which returns `"type": "not-found"` for a bogus id.
+
+3. **The dashboard panels.** A panel with a subtly wrong filter renders perfectly
+   and is simply empty, indistinguishable from a healthy panel on a quiet system.
+   So the verifier re-executes every committed panel query — **using each panel's
+   own declared request type**, because scalar and time-series return different
+   shapes and counting the wrong one reads as zero. Legitimately-empty panels go
+   in an allowlist *with a written reason*, otherwise "expected empty" quietly
+   becomes "we stopped looking."
+
+4. **The dashboards themselves.** Opening a committed dashboard in the UI showed
+   the brand-new-dashboard empty state — blank title, no panels. Every API check
+   said otherwise: four dashboards present, six panels each, 26 of 27 panel
+   queries returning rows. The data was never the problem. The dashboards use
+   SigNoz's v6 schema, which only the newer frontend renders, and that sits behind
+   a feature flag which ships off. The flag has no write API (the writes returned
+   the catch-all HTML, of course) and is set through config, where underscores
+   inside a flag name are *doubled* in the env-var form — not something you guess.
+   I found it by grepping the server binary for `SIGNOZ_[A-Z_]*` and spotting a
+   shipped sibling flag.
+
+5. **Trace existence.** `/api/v1/traces/:id` returns 200 for traces that do not
+   exist. I used it to confirm some traces had survived a restart, got a green
+   light that meant nothing, and only caught it by querying ClickHouse directly.
+
+> **When a system has a catch-all route, status codes stop carrying information
+> for every endpoint — not just the ones that burned you.** Any check a fallback
+> can satisfy has to assert on content: a parsed field, a row count, a span list.
+> Otherwise it is not a check.
+
+There is a companion lesson about *where to look*. Four times, the fastest path
+to the truth was the shipped frontend bundle. The deep-link format is the clearest
+example — rather than copying a URL out of the address bar, the bundle gave four
+independent confirmations: the router constant `ROUTES.TRACE_DETAIL: '/trace/:id'`;
+the trace-detail chunk reading `searchParams.get('spanId')` to decide which span
+to expand; the UI's own **Copy link** handler building exactly that string; and
+the waterfall API accepting the id. When vendor docs and a running instance
+disagree, the client is a complete, current, executable description of the API,
+and it gives you the format *and* the reason.
+
+## The failures that only appear in CI
+
+The gate worked locally, first try, every time. Then I opened a real pull request
+and it failed with `0/32 spans`.
+
+Not a partial count. Zero. Meanwhile every health check was green — SigNoz's
+`/api/v1/health` returning 200 the whole way through.
+
+The collector logs had it. About thirty-five seconds into the run:
+
+```
+"msg":"Shutdown complete."
+"msg":"Starting collector service"
+```
+
+SigNoz's collector fetches its configuration over opamp shortly after boot and
+**restarts**. Anything exported during that window is accepted over OTLP —
+returns 200, no error, no warning — and then dropped. Locally this never bit me
+because SigNoz had been running for an hour before I ever ran the suite. It only
+happens on a cold deployment, which is precisely what CI is.
+
+The fix is not a longer timeout. It is gating on the property you actually depend
+on: write a probe span, then poll the query API until it reads back. Health means
+"the API process is up." It does not mean "the pipeline persists data," and those
+are different claims.
+
+The general version already existed elsewhere in the runner: after flushing, it
+waits until the run's spans are queryable and **fails loudly** rather than
+diffing a partial run. That guard earned its keep before it ever reached CI — its
+first act was to report `0/6` and catch a bug in my own response parser, which
+would otherwise have returned an empty list that downstream code would have read
+as *no regression*. A component that fails loudly on the expected failure mode
+also surfaces the unexpected ones.
+
+There is a smaller sibling worth knowing about, one span's resolution down. The
+first run of the diagnosis check failed reporting the root span missing — it was
+there 200ms later. **The root span closes and exports last**, so "the trace
+exists" goes true before the trace is *complete*, and a poll that breaks on the
+first non-empty read observes a torn trace. Wait on the last-written span, not on
+any span.
+
+And one that is pure CI plumbing but cost an hour:
+
+> **GitHub Actions runs steps under `bash -eo pipefail` by default, so
+> `code=${PIPESTATUS[0]}` never executes.** The step dies on the failing command
+> before it can capture the exit code it exists to capture — and the gate's whole
+> design is "post the comment, *then* fail." Every step that inspects an exit code
+> has to `set +e` first.
+
+I found that by extracting each `run:` block out of the workflow YAML and
+executing it under `bash --noprofile --norc -eo pipefail` locally, which is worth
+doing for any workflow you cannot afford to debug by pushing commits.
+
+## Dashboards as code, and four shapes the schema does not describe
+
+Four dashboards and two alert rules are committed as JSON and reconciled onto
+SigNoz through its **MCP server** rather than the REST API. The committed JSON
+*is* the MCP tool argument, so there is no payload translation layer to drift out
+of sync.
+
+The MCP server publishes an `inputSchema` per tool, and it is a faithful
+rendering of the underlying Go types. It still leaves four things to be
+discovered by HTTP 400:
+
+1. **`schemaVersion` must be the string `"v6"`** — typed as a bare string with no
+   enum, so nothing tells you the set of legal values.
+2. **The grid is 12 columns wide in total, not 24.** A half-width panel is
+   `width: 6`, which looks like a quarter until you find out.
+3. **Table panels format per column** via a `columnUnits` map, and reject a bare
+   `unit` with *"json: unknown field"*. Every other panel type takes `unit`.
+4. **A panel accepts exactly one query entry.** Multi-query arithmetic goes
+   *inside* a single composite-query plugin carrying the input builder-query specs
+   plus a formula — not three sibling entries, which fails with *"panel must have
+   one query"*.
+
+Probing for those took four cycles and no amount of reading would have shortened
+it. Which is an argument for treating a published schema as a description of
+*types*, not of *validity*.
+
+## Making an agent explain itself
+
+When the gate fails, a second agent investigates. It reads the traces over the
+**SigNoz MCP server** — that is its only source of facts, it cannot read the
+repository — and explains what happened in English:
+
+> The **damaged-item case** is the worst regressor: cost increased from $0.00246
+> to $0.00946 (+284%), tokens from 2,016 to 7,116 (+253%). In the baseline it
+> made 1 tool call and 1 retrieval; in the candidate it makes 3 tool calls
+> (`lookup_order`, `check_inventory`, and `policy_search` called twice) and 3
+> retrievals.
+
+It is itself instrumented, so its investigation lands in SigNoz as a trace of its
+own — one span per reasoning turn, one per query, a couple of dozen in total. One
+failed gate produces the agent's traces, the gate's queries against them, and the
+diagnosis agent's own reasoning, all in one place.
+
+Writing the acceptance check for that taught me the most useful thing here. My
+first instinct was "assert the explanation names the worst case." That check is
+nearly worthless: the gate's per-case table is *in the agent's prompt*. A model
+that called nothing and read nothing could pass it by paraphrasing its own input.
+
+What makes the check real is that `policy_search` and `policy-kb` appear nowhere
+in the prompt. They exist only as span attributes. Quoting them is proof the
+agent went to SigNoz and came back.
+
+> **When you test a generated explanation, find a fact that lives only on the far
+> side of the tool call, and assert on that. Everything else measures fluency.**
+
+That check immediately earned its keep. I A/B'd a tightened prompt that demanded
+the model name a concrete root cause and rule out alternatives. It reasoned
+*visibly better* — correctly identified a prompt edit, explicitly excluded a model
+swap because every span still showed the same model. It also stopped grouping by
+tool name, and therefore asserted "the same tools appear in both runs," which is
+flatly false. The check failed it. Same model, same data, same tools: instructing
+it harder about *what to conclude* pulled effort away from *gathering what the
+conclusion rests on*. I kept the looser prompt and recorded the A/B next to it so
+nobody "improves" it back.
+
+Two engineering notes from that piece which generalise well beyond it.
+
+**Compaction is a cost control, not a nicety.** A trace-details response is 17.5k
+characters, of which the envelope, per-column metadata, and the roughly thirty
+always-null well-known fields every span row carries are almost all of it.
+Compacting gets it to 5.1k. That matters more than it looks, because in a
+tool-use loop the whole transcript is re-sent every turn — one fat tool result is
+not paid once, it is paid on every subsequent turn. The same logic applies to the
+schemas: the server advertises 42 tools, and pasting their faithful, verbose
+`inputSchema`s would cost over 10k input tokens *per turn*. The client reads them
+live but keeps 2 tools and only the parameters the agent is allowed to set, so a
+schema that changes upstream is a loud failure at startup rather than a 400
+mid-investigation.
+
+**The diagnosis nearly poisoned the gate.** The instinct is to stamp diagnosis
+spans with the SHA they are about. That would have been an outage in waiting: the
+differ resolves a SHA to its *most recent* run, so a diagnosis emitted after the
+candidate suite wins that race, and the next gate run diffs the agent against its
+own explanation. Diagnosis spans therefore carry a deliberately distinct
+`vcs.commit_sha` under their own service name. Same family as the dashboard
+`name` trap — a field that looks like a correlation key is a *selector* somewhere
+else.
+
+## Determinism, and where it ends
+
+Every model response is recorded to a cassette keyed on a hash of the request —
+model, system prompt, messages, tools, max tokens, temperature — and the
+cassettes are committed. CI runs with replay forced on, so the gate makes **zero**
+model API calls in GitHub Actions, and a fresh clone runs the entire suite offline
+and free. Two problems, one fix: a gate whose numbers move between runs is not a
+gate, and paying per PR for a check that runs on every PR is not a check anyone
+keeps. Total model spend across the whole project was $0.22, gated call by call
+through a file-locked ledger that fails closed.
+
+A detail that is easy to get backwards: the suite runs at `temperature=0`, but
+*not* for determinism at inference — it does not give you that. It is so that
+re-recording cassettes does not rewrite every expected answer and force the
+assertions to be re-tuned.
+
+It is worth being precise about where determinism ends. The agent's cassettes key
+off prompts that never change, so they always hit. The *diagnosis* agent's
+transcript embeds live SigNoz results, so its cassette only hits while SigNoz
+still holds the data it was recorded against — which, on someone else's stack with
+their own runs, it usually will not.
+
+That is the general shape, and it is the same lesson as the aggregation aliases:
+**anything that varies between runs and reaches the request is part of your cache
+key, whether you meant it to be or not.** Rounding the query window up to a
+ten-minute bucket removed the obvious source of drift. It did not remove the tool
+results themselves. So the honest position is a best-effort replay that fails
+loudly with a self-describing error, plus a live path that costs about five cents
+— rather than claiming a reproducibility I do not have.
+
+## What I'd do differently
+
+**I'd spend the first hour on interfaces, not the first feature.** One dataclass
+for what the query layer returns, one for what the gate produces, both written
+before anything consumed them. That is what let three parts of the system be
+built against a stable seam instead of a moving target, and it is why the metric
+arithmetic has exactly one implementation.
+
+**I'd distrust confident error messages sooner.** "Has never been received — check
+the metric name and instrumentation" was a statement about a *name*, and I nearly
+deleted a true claim about working code because of it. Verification has to run in
+both directions: not only "is this claim too strong?" but "is this failure real?"
+
+**I'd write the "does it render?" check at the same time as the "does the API
+return it?" check.** Four dashboards were present and queryable and completely
+invisible for hours. The claim was never "the API returns four dashboards" — it was
+"someone opens this and sees panels", and I verified the wrong one. Anything served
+through a UI needs at least one check that follows the same path the UI does.
+
+**I would not change the bet.** No results file, everything through the query
+API. It made the gate harder to build and it is the reason a reviewer can go from
+a number in a PR comment to the exact span that explains it in one click.
+
+---
+
+*Source: [github.com/ishanavasthi/preflight](https://github.com/ishanavasthi/preflight)*
