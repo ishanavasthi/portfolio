@@ -8,6 +8,13 @@ export type Project = {
 
 export const projects: readonly Project[] = [
   {
+    name: "Preflight: AI Agent Regression Detection",
+    description: "Built a CI tool that catches cost, latency, token, and success-rate regressions in AI agent systems before deployment, comparing agent behavior across commits and posting findings to pull requests with deep links to the offending trace spans. A diagnosis agent queries SigNoz over MCP to explain each failed gate in natural language, and its own investigation is traced and queryable.",
+    tech: ["Python", "OpenTelemetry", "SigNoz", "ClickHouse", "MCP", "Claude API", "Docker Compose", "GitHub Actions", "YAML"],
+    github: "https://github.com/ishanavasthi/preflight",
+    live: "https://link.ishanavasthi.in/preflight-video",
+  },
+  {
     name: "ClinicFlow: AI Healthcare Receptionist",
     description: "Built a real-time AI voice agent that answers patient calls, runs intake, books appointments, and routes callers, with a live operator dashboard. Combines a barge-in capable LiveKit pipeline with auditable LLM function tools and deterministic guardrails so the agent never invents facts or skips steps.",
     tech: ["Python", "LiveKit", "Deepgram STT", "Groq", "Numik TTS", "FastAPI", "SQLModel", "SQLite", "Next.js", "TypeScript"],
