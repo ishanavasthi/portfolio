@@ -128,8 +128,17 @@ export function ProjectFilters({
               ) : null}
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-72 p-0">
-            <ScrollArea className="max-h-80">
+          <PopoverContent
+            align="start"
+            className="w-72 overflow-hidden p-0"
+          >
+            {/*
+              ScrollArea needs a DEFINITE height. Its viewport is `size-full`,
+              and `height: 100%` against a max-height-only parent resolves to
+              `auto` — the viewport then grows to full content height, nothing
+              scrolls, and the list paints outside the popover.
+            */}
+            <ScrollArea type="auto" className="h-[min(20rem,60vh)]">
               <div className="flex flex-col gap-4 p-3">
                 {TAG_GROUPS.map((group, i) => {
                   const available = group.tags.filter((t) => usedTags.has(t));
