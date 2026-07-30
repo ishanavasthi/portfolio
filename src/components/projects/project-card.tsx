@@ -56,9 +56,9 @@ export function ProjectCard({
   const showDescription = variant === "featured" || project.weight === 2;
 
   return (
-    // No `layout` prop here on purpose: transform-based layout projection
-    // fights the CSS multi-column flow of the cascade. Re-cascades are
-    // animated by re-keying the container instead.
+    // No `layout` prop here on purpose: cards remount when the cascade
+    // re-keys, so there is no stable element for layout projection to animate
+    // between. Re-cascades are animated by replaying the stagger instead.
     <motion.div variants={cardVariants} className="group">
       <Card
         className={cn(
