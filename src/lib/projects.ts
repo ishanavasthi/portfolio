@@ -217,6 +217,19 @@ export const projects: readonly Project[] = [
 
   // ─── Developer Tools ───────────────────────────────────────────────────
   {
+    slug: "context-lens",
+    name: "ContextLens",
+    headline: "Browser activity capture that survives MV3 service worker death without dropping or duplicating a single event.",
+    description:
+      "A Chrome Manifest V3 extension that captures tab changes, navigation, DOM interactions, and screenshots, then persists them through a backend API into Postgres. The MV3 service worker is killed on idle and restarted on the next event, so nothing durable lives in memory: every event lands in IndexedDB before it counts as captured, timers are chrome.alarms rather than setInterval, and client-generated ULID event IDs make a retry after termination provably idempotent. Consent is a first-class feature — capture is off by default, granted scope by scope, with screenshots needing a second opt-in, and input values, passwords, cookies, and raw text are never read at all. The Playwright suite loads the built extension into real Chrome and asserts the queue survives forced worker termination.",
+    domain: "tools",
+    tags: ["TypeScript", "Docker", "DevTools", "Full-Stack", "Systems"],
+    tech: ["TypeScript", "Chrome MV3", "IndexedDB", "Postgres", "Docker", "Playwright", "ULID"],
+    year: 2026,
+    weight: 2,
+    github: gh("context-lens"),
+  },
+  {
     slug: "markdown-copier",
     name: "Markdown Copier",
     headline: "Chrome extension that turns any page into clean, LLM-ready Markdown.",
