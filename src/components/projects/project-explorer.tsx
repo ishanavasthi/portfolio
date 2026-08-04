@@ -120,14 +120,20 @@ export function ProjectExplorer() {
       // archive if that's where it lives.
       commit({ domain: "all", tags: [] });
       if (ARCHIVED_DOMAINS.includes(target.domain)) setArchiveOpen(true);
-      // Two frames: one for the state commit, one for the cascade to lay out.
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-          document
-            .getElementById(`project-${slug}`)
-            ?.scrollIntoView({ behavior: "smooth", block: "center" });
-        }),
-      );
+      // The card can take a few frames to exist: the URL commit re-renders the
+      // grid, the cascade re-keys and lays out, and an archived section has to
+      // mount its collapsible content. Poll for the anchor instead of guessing
+      // a frame count, and give up rather than spin forever.
+      let frames = 0;
+      const findAndScroll = () => {
+        const el = document.getElementById(`project-${slug}`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+        if (frames++ < 60) requestAnimationFrame(findAndScroll);
+      };
+      requestAnimationFrame(findAndScroll);
     },
     [commit],
   );
@@ -178,6 +184,7 @@ export function ProjectExplorer() {
                 project={p}
                 variant="featured"
                 index={i + 1}
+                id={`project-${p.slug}`}
               />
             ))}
           </motion.div>

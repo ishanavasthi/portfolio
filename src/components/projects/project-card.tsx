@@ -43,6 +43,7 @@ export function ProjectCard({
   project,
   variant = "cascade",
   index,
+  id,
   onTagClick,
   activeTags,
 }: {
@@ -51,6 +52,8 @@ export function ProjectCard({
   variant?: "featured" | "cascade";
   /** Mono 3-digit ledger index shown above the project name. */
   index?: number;
+  /** Scroll anchor. The cascade puts this on its own wrapper instead. */
+  id?: string;
   onTagClick?: (tag: string) => void;
   activeTags?: readonly string[];
 }) {
@@ -60,7 +63,11 @@ export function ProjectCard({
     // No `layout` prop here on purpose: cards remount when the cascade
     // re-keys, so there is no stable element for layout projection to animate
     // between. Re-cascades are animated by replaying the stagger instead.
-    <motion.div variants={cardVariants} className="group">
+    <motion.div
+      id={id}
+      variants={cardVariants}
+      className={cn("group", id && "scroll-mt-24")}
+    >
       <div
         className={cn(
           "relative flex h-full flex-col gap-4 rounded-[6px] border border-border bg-[--surface] px-5 py-5 transition-colors duration-[180ms] ease-out",
