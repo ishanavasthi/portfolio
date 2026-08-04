@@ -1,6 +1,7 @@
 import { Hero } from "@/components/sections/hero";
 import { Stats } from "@/components/sections/stats";
 import { About } from "@/components/sections/about";
+import { Skills } from "@/components/sections/skills";
 import { Projects } from "@/components/sections/projects";
 
 export default function HomePage() {
@@ -9,6 +10,7 @@ export default function HomePage() {
       <Hero />
       <Stats />
       <About />
+      <Skills />
       <Projects />
     </>
   );
