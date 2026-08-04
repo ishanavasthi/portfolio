@@ -45,6 +45,7 @@ export const SKILLS: readonly SkillCategory[] = [
       { label: "Gemini" },
       { label: "Groq" },
       { label: "LangGraph" },
+      { label: "LangChain" },
       { label: "Voice agents · LiveKit" },
       { label: "RAG · ChromaDB" },
     ],
@@ -59,9 +60,11 @@ export const SKILLS: readonly SkillCategory[] = [
     chips: [
       { label: "Agent evals", hot: true },
       { label: "OpenTelemetry tracing", hot: true },
+      { label: "LangSmith" },
       { label: "RL environments · OpenEnv" },
       { label: "CI regression gates" },
       { label: "Deterministic guardrails" },
+      { label: "Prompt-injection defense" },
       { label: "SigNoz / ClickHouse" },
     ],
     proof: () => {
@@ -98,6 +101,8 @@ export const SKILLS: readonly SkillCategory[] = [
       { label: "Node / Express" },
       { label: "Spring Boot" },
       { label: "Postgres" },
+      { label: "Supabase" },
+      { label: "MongoDB" },
       { label: "Docker" },
       { label: "GitHub Actions" },
       { label: "AWS" },
