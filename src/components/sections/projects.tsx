@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { ProjectCard } from "@/components/projects/project-card";
+import { SectionHead } from "@/components/layout/section-head";
+import { ProjectLedgerRow } from "@/components/projects/project-ledger-row";
 import { featuredProjects, projects } from "@/lib/projects";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+const staticCapture = process.env.NEXT_PUBLIC_STATIC_CAPTURE === "1";
 
 const container: Variants = {
   hidden: {},
@@ -13,7 +17,7 @@ const container: Variants = {
 
 const item: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
 };
 
 /**
@@ -21,40 +25,41 @@ const item: Variants = {
  */
 export function Projects() {
   return (
-    <section id="projects" className="px-4 py-12 md:px-6 md:py-16">
-      <motion.div
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-15% 0px" }}
-        className="mx-auto max-w-3xl"
-      >
-        <motion.p
-          variants={item}
-          className="text-muted-foreground font-mono text-xs tracking-widest uppercase"
+    <section id="projects" className="border-b border-border py-[88px]">
+      <div className="mx-auto max-w-[1080px] px-6">
+        <SectionHead index="03" title="Selected projects" />
+
+        <motion.div
+          variants={container}
+          initial={staticCapture ? "show" : "hidden"}
+          whileInView={staticCapture ? undefined : "show"}
+          animate={staticCapture ? "show" : undefined}
+          viewport={{ once: true, margin: "-15% 0px" }}
         >
-          Projects
-        </motion.p>
-
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-          {featuredProjects.map((p) => (
-            <ProjectCard key={p.slug} project={p} variant="featured" />
+          {featuredProjects.map((p, i) => (
+            <motion.div key={p.slug} variants={item}>
+              <ProjectLedgerRow
+                project={p}
+                index={i + 1}
+                isLast={i === featuredProjects.length - 1}
+              />
+            </motion.div>
           ))}
-        </div>
 
-        <motion.div variants={item} className="mt-8">
-          <Link
-            href="/projects"
-            className="text-muted-foreground hover:text-[--accent] group inline-flex items-center gap-1.5 font-mono text-xs transition-colors"
-          >
-            View all {projects.length} projects
-            <ArrowRight
-              className="size-3.5 transition-transform group-hover:translate-x-0.5"
-              aria-hidden
-            />
-          </Link>
+          <motion.div variants={item}>
+            <Link
+              href="/projects"
+              className="group mt-9 inline-flex items-center gap-2 font-mono text-[13px] text-muted-foreground transition-colors duration-[180ms] ease-out hover:text-accent"
+            >
+              View all {projects.length} projects
+              <ArrowRight
+                className="size-3.5 transition-transform duration-[180ms] ease-out group-hover:translate-x-[3px]"
+                aria-hidden
+              />
+            </Link>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }
