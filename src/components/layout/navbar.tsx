@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Socials } from "@/components/layout/socials";
 import { navLinks } from "@/lib/site";
+import { EASE_SIGNATURE } from "@/lib/motion/variants";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const fadeUp: Variants = {
@@ -21,7 +22,7 @@ const fadeUp: Variants = {
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: i * 0.08 },
+    transition: { duration: 0.5, ease: EASE_SIGNATURE, delay: i * 0.08 },
   }),
 };
 
@@ -33,7 +34,7 @@ export function Navbar() {
     <motion.header
       initial={skipEntrance ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.5, ease: EASE_SIGNATURE }}
       className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/85 backdrop-blur-md"
     >
       <nav className="mx-auto flex h-14 max-w-[1080px] items-center justify-between px-6">

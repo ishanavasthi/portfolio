@@ -34,6 +34,7 @@ import {
   type TagGroupId,
 } from "@/lib/taxonomy";
 import { motion, type Variants } from "framer-motion";
+import { EASE_SIGNATURE } from "@/lib/motion/variants";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const VALID_DOMAINS = new Set<string>(DOMAINS.map((d) => d.id));
@@ -55,7 +56,11 @@ function matchesTags(project: Project, selected: readonly Tag[]) {
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: EASE_SIGNATURE },
+  },
 };
 
 export function ProjectExplorer() {

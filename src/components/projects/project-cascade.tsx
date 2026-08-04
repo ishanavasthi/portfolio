@@ -1,16 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { motion, type Variants } from "framer-motion";
 import type { Project } from "@/lib/projects";
 import { ProjectCard } from "@/components/projects/project-card";
+import { StaggerGroup } from "@/components/motion/stagger";
 import { cn } from "@/lib/utils";
-import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
-
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.05, delayChildren: 0.04 } },
-};
 
 const BREAKPOINTS = [
   { query: "(min-width: 1024px)", columns: 3 },
@@ -70,7 +64,6 @@ export function ProjectCascade({
   className?: string;
 }) {
   const columnCount = useColumnCount();
-  const skipEntrance = useSkipEntrance();
 
   const columns = React.useMemo(() => {
     const buckets: { project: Project; index: number }[][] = Array.from(
@@ -84,11 +77,11 @@ export function ProjectCascade({
   }, [projects, columnCount]);
 
   return (
-    <motion.div
+    <StaggerGroup
       key={cascadeKey}
-      variants={container}
-      initial={skipEntrance ? "show" : "hidden"}
-      animate="show"
+      mode="mount"
+      stagger={0.05}
+      delayChildren={0.04}
       className={cn("flex items-start gap-4", className)}
     >
       {columns.map((column, i) => (
@@ -111,6 +104,6 @@ export function ProjectCascade({
           ))}
         </div>
       ))}
-    </motion.div>
+    </StaggerGroup>
   );
 }

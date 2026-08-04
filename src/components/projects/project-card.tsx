@@ -4,16 +4,16 @@ import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/icons/brand";
+import { TiltCard } from "@/components/motion/tilt-card";
+import { EASE_SIGNATURE } from "@/lib/motion/variants";
 import type { Project } from "@/lib/projects";
 import { sortTags } from "@/lib/taxonomy";
 import { cn } from "@/lib/utils";
 
-const ease = [0.22, 1, 0.36, 1] as const;
-
 export const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
-  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_SIGNATURE } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: EASE_SIGNATURE } },
 };
 
 function IconLink({
@@ -68,78 +68,83 @@ export function ProjectCard({
       variants={cardVariants}
       className={cn("group", id && "scroll-mt-24")}
     >
-      <div
-        className={cn(
-          "relative flex h-full flex-col gap-4 rounded-[6px] border border-border bg-[--surface] px-5 py-5 transition-colors duration-[180ms] ease-out",
-          "hover:border-accent/60 hover:bg-white/[0.015]",
-        )}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex min-w-0 flex-col gap-1">
-            {index !== undefined ? (
-              <span className="font-mono text-[11px] text-muted-foreground">
-                {String(index).padStart(3, "0")}
+      <TiltCard className="h-full">
+        <div
+          className={cn(
+            "relative flex h-full flex-col gap-4 rounded-[6px] border border-border bg-[--surface] px-5 py-5 transition-colors duration-[180ms] ease-out",
+            "hover:border-accent/60 hover:bg-white/[0.015]",
+          )}
+        >
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 flex-col gap-1">
+              {index !== undefined ? (
+                <span className="font-mono text-[11px] text-muted-foreground">
+                  {String(index).padStart(3, "0")}
+                </span>
+              ) : null}
+              <span className="truncate text-base font-semibold tracking-[-0.01em] text-foreground transition-colors duration-[180ms] ease-out group-hover:text-accent">
+                {project.name}
               </span>
-            ) : null}
-            <span className="truncate text-base font-semibold tracking-[-0.01em] text-foreground transition-colors duration-[180ms] ease-out group-hover:text-accent">
-              {project.name}
-            </span>
-            <span className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
-              {project.year}
-            </span>
+              <span className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+                {project.year}
+              </span>
+            </div>
+            <div className="flex shrink-0 items-center gap-0.5">
+              {project.github ? (
+                <IconLink
+                  href={project.github}
+                  label={`${project.name} on GitHub`}
+                >
+                  <GithubIcon className="size-4" />
+                </IconLink>
+              ) : null}
+              {project.live ? (
+                <IconLink href={project.live} label={`${project.name} live site`}>
+                  <ArrowUpRight className="size-4" aria-hidden />
+                </IconLink>
+              ) : null}
+            </div>
           </div>
-          <div className="flex shrink-0 items-center gap-0.5">
-            {project.github ? (
-              <IconLink href={project.github} label={`${project.name} on GitHub`}>
-                <GithubIcon className="size-4" />
-              </IconLink>
-            ) : null}
-            {project.live ? (
-              <IconLink href={project.live} label={`${project.name} live site`}>
-                <ArrowUpRight className="size-4" aria-hidden />
-              </IconLink>
-            ) : null}
-          </div>
-        </div>
 
-        <p className="text-sm leading-relaxed text-foreground/90">
-          {project.headline}
-        </p>
-        {showDescription ? (
-          <p className="text-sm leading-relaxed text-[var(--text-dim)]">
-            {project.description}
+          <p className="text-sm leading-relaxed text-foreground/90">
+            {project.headline}
           </p>
-        ) : null}
+          {showDescription ? (
+            <p className="text-sm leading-relaxed text-[var(--text-dim)]">
+              {project.description}
+            </p>
+          ) : null}
 
-        <ul className="flex flex-wrap gap-1.5">
-          {sortTags(project.tags).map((t) => {
-            const active = activeTags?.includes(t);
-            const chipClass = cn(
-              "rounded-[4px] border border-border px-[10px] py-1 font-mono text-[11px] text-[var(--text-dim)] transition-colors duration-[180ms] ease-out",
-              active && "border-[rgba(110,231,183,0.35)] text-accent",
-            );
-            return (
-              <li key={t}>
-                {onTagClick ? (
-                  <button
-                    type="button"
-                    onClick={() => onTagClick(t)}
-                    aria-pressed={active}
-                    className={cn(
-                      chipClass,
-                      "cursor-pointer hover:border-accent hover:text-accent",
-                    )}
-                  >
-                    {t}
-                  </button>
-                ) : (
-                  <span className={chipClass}>{t}</span>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+          <ul className="flex flex-wrap gap-1.5">
+            {sortTags(project.tags).map((t) => {
+              const active = activeTags?.includes(t);
+              const chipClass = cn(
+                "rounded-[4px] border border-border px-[10px] py-1 font-mono text-[11px] text-[var(--text-dim)] transition-colors duration-[180ms] ease-out",
+                active && "border-[rgba(110,231,183,0.35)] text-accent",
+              );
+              return (
+                <li key={t}>
+                  {onTagClick ? (
+                    <button
+                      type="button"
+                      onClick={() => onTagClick(t)}
+                      aria-pressed={active}
+                      className={cn(
+                        chipClass,
+                        "cursor-pointer hover:border-accent hover:text-accent",
+                      )}
+                    >
+                      {t}
+                    </button>
+                  ) : (
+                    <span className={chipClass}>{t}</span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </TiltCard>
     </motion.div>
   );
 }

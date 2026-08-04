@@ -78,7 +78,7 @@ export const projects: readonly Project[] = [
     name: "AlphaDesk",
     headline: "Multi-agent Indian equity research desk with human approval checkpoints.",
     description:
-      "Built a full-stack multi-agent research platform that automates Indian stock analysis with LangGraph, live NSE market data, RAG over financial filings, human approval checkpoints, and a real-time research dashboard.",
+      "Built a full-stack multi-agent research platform that automates Indian stock analysis with LangGraph — a pipeline of Scanner, Research, Analyst, RiskManager, and Execution agents over live NSE market data, with RAG over financial filings, human approval checkpoints, and a real-time research dashboard.",
     domain: "agents",
     tags: ["Python", "TypeScript", "LangGraph", "FastAPI", "Next.js", "Multi-Agent", "RAG", "Full-Stack"],
     tech: ["LangGraph", "Next.js", "TypeScript", "FastAPI", "ChromaDB", "ONNX", "LangSmith"],

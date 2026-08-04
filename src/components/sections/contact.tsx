@@ -1,21 +1,15 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { SectionHead } from "@/components/layout/section-head";
 import { socials } from "@/lib/site";
+import {
+  fadeUpItem,
+  staggerContainer,
+  VIEWPORT_ONCE,
+} from "@/lib/motion/variants";
+import { Reveal } from "@/components/motion/reveal";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
-
-const ease = [0.22, 1, 0.36, 1] as const;
-
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
-};
-
-const item: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
-};
 
 const email = socials.email.replace(/^mailto:/, "");
 
@@ -24,17 +18,19 @@ export function Contact() {
   return (
     <section id="contact" className="py-[88px]">
       <div className="mx-auto max-w-[1080px] px-6">
-        <SectionHead index="04" title="Contact" />
+        <Reveal direction="up">
+          <SectionHead index="04" title="Contact" />
+        </Reveal>
 
         <motion.div
-          variants={container}
+          variants={staggerContainer}
           initial={skipEntrance ? "show" : "hidden"}
           whileInView={skipEntrance ? undefined : "show"}
           animate={skipEntrance ? "show" : undefined}
-          viewport={{ once: true, margin: "-15% 0px" }}
+          viewport={VIEWPORT_ONCE}
         >
           <motion.p
-            variants={item}
+            variants={fadeUpItem}
             className="max-w-[720px] text-[clamp(28px,4.5vw,44px)] leading-[1.25] font-semibold tracking-[-0.02em] text-foreground"
           >
             Building something with agents?

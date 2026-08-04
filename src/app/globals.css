@@ -61,6 +61,10 @@
   --text-dim: #a3a3a3;
   --muted: #737b89;
   --accent: #6ee7b7;
+  /* Traveling-signal color for the AgentFlow pipeline diagram. Aliased to the
+     accent so the site stays single-hue; change here if the signal ever needs
+     to diverge from UI accent states. */
+  --agent-signal: var(--accent);
 
   --background: var(--bg);
   --foreground: var(--text);
@@ -76,6 +80,9 @@
   --accent-foreground: var(--bg);
   --destructive: oklch(0.704 0.191 22.216);
   --border: #1f1f1f;
+  /* One step up from --border for strokes that would vanish against --bg at
+     hairline widths (e.g. the AgentFlow pipeline path). */
+  --border-strong: #2a2a2a;
   --input: var(--border);
   --ring: var(--accent);
   --chart-1: oklch(0.87 0 0);
