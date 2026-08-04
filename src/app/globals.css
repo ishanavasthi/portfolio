@@ -58,7 +58,8 @@
   --bg: #0a0a0a;
   --surface: #111111;
   --text: #e8e8e8;
-  --muted: #6b7280;
+  --text-dim: #a3a3a3;
+  --muted: #737b89;
   --accent: #6ee7b7;
 
   --background: var(--bg);
@@ -130,5 +131,11 @@
   kbd,
   samp {
     @apply font-mono;
+  }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
   }
 }

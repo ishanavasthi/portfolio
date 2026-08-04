@@ -5,12 +5,16 @@ export const site = {
   description:
     "I build LLM-powered systems, agentic workflows, and developer tools.",
   url: "https://ishanavasthi.in",
+  location: "IND · BITS Pilani",
+  status: "open to AI engineering roles",
 } as const;
 
 export const navLinks = [
   { href: "/#about", label: "About" },
+  { href: "/#skills", label: "Skills" },
   { href: "/projects", label: "Projects" },
   { href: "/blog", label: "Blog" },
+  { href: "/#contact", label: "Contact" },
 ] as const;
 
 export const socials = {

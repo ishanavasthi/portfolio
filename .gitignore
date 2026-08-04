@@ -43,3 +43,9 @@ next-env.d.ts
 # Claude
 CLAUDE.md
 AGENTS.md
+PLAN.md
+DECISIONS.md
+.claude/settings.local.json
+.claude/**/*.local.json
+.claude/**/.env*
+.mcp.json

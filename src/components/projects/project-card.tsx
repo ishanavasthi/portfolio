@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { GithubIcon } from "@/components/icons/brand";
 import type { Project } from "@/lib/projects";
 import { sortTags } from "@/lib/taxonomy";
@@ -34,7 +32,7 @@ function IconLink({
       rel="noopener noreferrer"
       aria-label={label}
       onClick={(e) => e.stopPropagation()}
-      className="text-muted-foreground hover:text-[--accent] inline-flex size-8 items-center justify-center rounded-md transition-colors"
+      className="inline-flex size-8 items-center justify-center rounded-[4px] text-muted-foreground transition-colors duration-[180ms] ease-out hover:text-accent"
     >
       {children}
     </Link>
@@ -44,12 +42,15 @@ function IconLink({
 export function ProjectCard({
   project,
   variant = "cascade",
+  index,
   onTagClick,
   activeTags,
 }: {
   project: Project;
   /** `featured` always shows the long description; `cascade` respects weight. */
   variant?: "featured" | "cascade";
+  /** Mono 3-digit ledger index shown above the project name. */
+  index?: number;
   onTagClick?: (tag: string) => void;
   activeTags?: readonly string[];
 }) {
@@ -60,19 +61,23 @@ export function ProjectCard({
     // re-keys, so there is no stable element for layout projection to animate
     // between. Re-cascades are animated by replaying the stagger instead.
     <motion.div variants={cardVariants} className="group">
-      <Card
+      <div
         className={cn(
-          "relative h-full gap-4 border-[--border] bg-[--surface] py-5 shadow-none transition-all duration-300",
-          "hover:-translate-y-0.5 hover:border-[--accent]/60",
-          "hover:shadow-[0_0_0_1px_color-mix(in_oklab,var(--accent)_25%,transparent),0_8px_32px_-12px_color-mix(in_oklab,var(--accent)_18%,transparent)]",
+          "relative flex h-full flex-col gap-4 rounded-[6px] border border-border bg-[--surface] px-5 py-5 transition-colors duration-[180ms] ease-out",
+          "hover:border-accent/60 hover:bg-white/[0.015]",
         )}
       >
-        <CardHeader className="flex-row items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-col gap-1">
-            <CardTitle className="text-foreground group-hover:text-[--accent] text-base font-semibold tracking-[-0.01em] transition-colors">
+            {index !== undefined ? (
+              <span className="font-mono text-[11px] text-muted-foreground">
+                {String(index).padStart(3, "0")}
+              </span>
+            ) : null}
+            <span className="truncate text-base font-semibold tracking-[-0.01em] text-foreground transition-colors duration-[180ms] ease-out group-hover:text-accent">
               {project.name}
-            </CardTitle>
-            <span className="text-muted-foreground font-mono text-[10px] tracking-widest uppercase">
+            </span>
+            <span className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
               {project.year}
             </span>
           </div>
@@ -88,54 +93,46 @@ export function ProjectCard({
               </IconLink>
             ) : null}
           </div>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          <p className="text-foreground/90 text-sm leading-relaxed">
-            {project.headline}
-          </p>
-          {showDescription ? (
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              {project.description}
-            </p>
-          ) : null}
+        </div>
 
-          <ul className="flex flex-wrap gap-1.5">
-            {sortTags(project.tags).map((t) => {
-              const active = activeTags?.includes(t);
-              return (
-                <li key={t}>
-                  {onTagClick ? (
-                    <button
-                      type="button"
-                      onClick={() => onTagClick(t)}
-                      aria-pressed={active}
-                      className="cursor-pointer"
-                    >
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "border-border text-muted-foreground hover:border-[--accent]/60 hover:text-[--accent] rounded-md px-1.5 py-0 font-mono text-[10px] font-normal tracking-tight transition-colors",
-                          active &&
-                            "border-[--accent]/60 text-[--accent] bg-[--accent]/10",
-                        )}
-                      >
-                        {t}
-                      </Badge>
-                    </button>
-                  ) : (
-                    <Badge
-                      variant="outline"
-                      className="border-border text-muted-foreground rounded-md px-1.5 py-0 font-mono text-[10px] font-normal tracking-tight"
-                    >
-                      {t}
-                    </Badge>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </CardContent>
-      </Card>
+        <p className="text-sm leading-relaxed text-foreground/90">
+          {project.headline}
+        </p>
+        {showDescription ? (
+          <p className="text-sm leading-relaxed text-[var(--text-dim)]">
+            {project.description}
+          </p>
+        ) : null}
+
+        <ul className="flex flex-wrap gap-1.5">
+          {sortTags(project.tags).map((t) => {
+            const active = activeTags?.includes(t);
+            const chipClass = cn(
+              "rounded-[4px] border border-border px-[10px] py-1 font-mono text-[11px] text-[var(--text-dim)] transition-colors duration-[180ms] ease-out",
+              active && "border-[rgba(110,231,183,0.35)] text-accent",
+            );
+            return (
+              <li key={t}>
+                {onTagClick ? (
+                  <button
+                    type="button"
+                    onClick={() => onTagClick(t)}
+                    aria-pressed={active}
+                    className={cn(
+                      chipClass,
+                      "cursor-pointer hover:border-accent hover:text-accent",
+                    )}
+                  >
+                    {t}
+                  </button>
+                ) : (
+                  <span className={chipClass}>{t}</span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </motion.div>
   );
 }

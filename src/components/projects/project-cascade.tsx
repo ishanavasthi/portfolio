@@ -5,6 +5,7 @@ import { motion, type Variants } from "framer-motion";
 import type { Project } from "@/lib/projects";
 import { ProjectCard } from "@/components/projects/project-card";
 import { cn } from "@/lib/utils";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const container: Variants = {
   hidden: {},
@@ -69,13 +70,16 @@ export function ProjectCascade({
   className?: string;
 }) {
   const columnCount = useColumnCount();
+  const skipEntrance = useSkipEntrance();
 
   const columns = React.useMemo(() => {
-    const buckets: Project[][] = Array.from(
+    const buckets: { project: Project; index: number }[][] = Array.from(
       { length: columnCount },
       () => [],
     );
-    projects.forEach((p, i) => buckets[i % columnCount].push(p));
+    projects.forEach((p, i) =>
+      buckets[i % columnCount].push({ project: p, index: i + 1 }),
+    );
     return buckets;
   }, [projects, columnCount]);
 
@@ -83,7 +87,7 @@ export function ProjectCascade({
     <motion.div
       key={cascadeKey}
       variants={container}
-      initial="hidden"
+      initial={skipEntrance ? "show" : "hidden"}
       animate="show"
       className={cn("flex items-start gap-4", className)}
     >
@@ -95,10 +99,11 @@ export function ProjectCascade({
           // keep their width instead of stretching to fill the row.
           aria-hidden={column.length === 0 ? true : undefined}
         >
-          {column.map((p) => (
+          {column.map(({ project: p, index }) => (
             <div key={p.slug} id={`project-${p.slug}`} className="scroll-mt-24">
               <ProjectCard
                 project={p}
+                index={index}
                 onTagClick={onTagClick}
                 activeTags={activeTags}
               />

@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Socials } from "@/components/layout/socials";
-import { navLinks, site } from "@/lib/site";
+import { navLinks } from "@/lib/site";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -26,21 +27,28 @@ const fadeUp: Variants = {
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const skipEntrance = useSkipEntrance();
 
   return (
     <motion.header
-      initial={{ opacity: 0, y: 20 }}
+      initial={skipEntrance ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background"
+      className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/85 backdrop-blur-md"
     >
-      <nav className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4 md:px-6">
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}>
+      <nav className="mx-auto flex h-14 max-w-[1080px] items-center justify-between px-6">
+        <motion.div
+          variants={fadeUp}
+          initial={skipEntrance ? "show" : "hidden"}
+          animate="show"
+          custom={0}
+        >
           <Link
             href="/"
-            className="text-foreground hover:text-[--accent] text-sm font-medium tracking-tight transition-colors"
+            className="font-mono text-[13px] text-foreground"
           >
-            {site.name}
+            ishan<span className="text-accent">@</span>avasthi
+            <span className="text-accent">:~$</span>
           </Link>
         </motion.div>
 
@@ -49,15 +57,15 @@ export function Navbar() {
             <motion.li
               key={link.href}
               variants={fadeUp}
-              initial="hidden"
+              initial={skipEntrance ? "show" : "hidden"}
               animate="show"
               custom={i + 1}
             >
               <Link
                 href={link.href}
-                className="text-muted-foreground hover:text-[--accent] text-sm transition-colors"
+                className="font-mono text-xs tracking-wide text-muted-foreground transition-colors hover:text-accent"
               >
-                {link.label}
+                {link.label.toLowerCase()}
               </Link>
             </motion.li>
           ))}
@@ -65,7 +73,7 @@ export function Navbar() {
 
         <motion.div
           variants={fadeUp}
-          initial="hidden"
+          initial={skipEntrance ? "show" : "hidden"}
           animate="show"
           custom={navLinks.length + 1}
           className="hidden items-center md:flex"
@@ -87,8 +95,9 @@ export function Navbar() {
           </SheetTrigger>
           <SheetContent side="right" className="border-border bg-background">
             <SheetHeader>
-              <SheetTitle className="text-left text-sm font-medium tracking-tight">
-                {site.name}
+              <SheetTitle className="text-left font-mono text-sm">
+                ishan<span className="text-accent">@</span>avasthi
+                <span className="text-accent">:~$</span>
               </SheetTitle>
             </SheetHeader>
             <ul className="mt-6 flex flex-col gap-4 px-4">
@@ -97,9 +106,9 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="text-foreground hover:text-[--accent] text-base transition-colors"
+                    className="font-mono text-base text-foreground transition-colors hover:text-accent"
                   >
-                    {link.label}
+                    {link.label.toLowerCase()}
                   </Link>
                 </li>
               ))}

@@ -1,19 +1,36 @@
-import { Socials } from "@/components/layout/socials";
-import { site } from "@/lib/site";
+import Link from "next/link";
+import { site, socials } from "@/lib/site";
 
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-border/60 mt-24 border-t">
-      <div className="mx-auto flex h-16 max-w-3xl items-center justify-between gap-4 px-4 md:px-6">
-        <span className="text-foreground text-sm font-medium tracking-tight">
-          {site.name}
-        </span>
-        <Socials />
-        <span className="text-muted-foreground text-xs">
+    <div className="mx-auto mt-16 max-w-[1080px] px-6">
+      <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-8 pb-12 font-mono text-xs text-muted-foreground">
+        <span>
           © {year} {site.name}
         </span>
-      </div>
-    </footer>
+        <div className="flex gap-5">
+          <Link
+            href={socials.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-accent"
+          >
+            GitHub
+          </Link>
+          <Link
+            href={socials.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-accent"
+          >
+            LinkedIn
+          </Link>
+          <Link href={socials.email} className="transition-colors hover:text-accent">
+            Email
+          </Link>
+        </div>
+      </footer>
+    </div>
   );
 }

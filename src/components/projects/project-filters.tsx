@@ -165,7 +165,7 @@ export function ProjectFilters({
                                 />
                                 <label
                                   htmlFor={id}
-                                  className="cursor-pointer text-sm leading-none"
+                                  className="cursor-pointer font-mono text-xs leading-none"
                                 >
                                   {tag}
                                 </label>
@@ -190,7 +190,7 @@ export function ProjectFilters({
         >
           <Search data-icon="inline-start" />
           Search
-          <kbd className="bg-muted/40 text-muted-foreground ml-1 rounded border border-[--border] px-1 font-mono text-[10px]">
+          <kbd className="ml-1 rounded-[4px] border border-border bg-muted/40 px-1 font-mono text-[10px] text-muted-foreground">
             ⌘K
           </kbd>
         </Button>
@@ -216,7 +216,7 @@ export function ProjectFilters({
             >
               <Badge
                 variant="outline"
-                className="border-[--accent]/50 text-[--accent] bg-[--accent]/10 gap-1 rounded-md px-1.5 py-0 font-mono text-[10px] font-normal"
+                className="gap-1 rounded-[4px] border-[rgba(110,231,183,0.35)] bg-accent/10 px-1.5 py-0 font-mono text-[10px] font-normal text-accent"
               >
                 {tag}
                 <X className="size-2.5" aria-hidden />

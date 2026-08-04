@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts, formatPostDate } from "@/lib/blog";
 import { BackLink } from "@/components/layout/back-link";
+import { SectionHead } from "@/components/layout/section-head";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -15,10 +16,11 @@ export default function BlogIndexPage() {
     <section className="px-4 py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-3xl">
         <BackLink />
-        <p className="text-muted-foreground mt-10 font-mono text-xs tracking-widest uppercase">
-          Blog
-        </p>
-        <h1 className="text-foreground mt-3 text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
+
+        <div className="mt-10">
+          <SectionHead index="01" title="Blog" />
+        </div>
+        <h1 className="text-foreground -mt-6 text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
           Writing
         </h1>
 
@@ -27,15 +29,15 @@ export default function BlogIndexPage() {
             No posts yet - check back soon.
           </p>
         ) : (
-          <ul className="border-border/60 mt-12 divide-y divide-[--border]">
+          <ul className="mt-12 border-b border-border">
             {posts.map((post) => (
               <li key={post.slug}>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group block py-6 transition-colors"
+                  className="group block border-t border-border py-7 transition-colors duration-[180ms] ease-out"
                 >
                   <div className="flex items-baseline justify-between gap-6">
-                    <h2 className="text-foreground group-hover:text-[--accent] text-lg font-medium tracking-[-0.01em] transition-colors">
+                    <h2 className="text-foreground group-hover:text-accent text-lg font-medium tracking-[-0.01em] transition-colors duration-[180ms] ease-out">
                       {post.title}
                     </h2>
                     <time
@@ -48,7 +50,7 @@ export default function BlogIndexPage() {
                   <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                     {post.summary}
                   </p>
-                  <p className="text-muted-foreground/70 mt-2 font-mono text-[11px] tracking-tight">
+                  <p className="text-muted-foreground/70 mt-3 font-mono text-[11px] tracking-widest uppercase">
                     {post.readingTime} min read
                   </p>
                 </Link>
