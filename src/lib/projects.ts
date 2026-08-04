@@ -132,6 +132,19 @@ export const projects: readonly Project[] = [
     github: gh("pr-review-bot"),
   },
   {
+    slug: "personalized-message-router",
+    name: "Message Notification Router",
+    headline: "Routes every WhatsApp message to notify, digest, or mute — and reproduces its own results offline.",
+    description:
+      "A multimodal notification router that decides which WhatsApp messages interrupt you, which wait for a digest, and which stay muted, reasoning over text, image posters, and voice notes with per-user history, group dynamics, and sender trust. A safety gate runs first and deliberately blind to engagement history, so a scam can't be argued down by a strong relationship. Evidence retrieval and confidence are deterministic code, not model output, and every model response is cached and committed — the run reproduces byte-for-byte with no API key set. 93% action accuracy on the labelled samples, standard library only.",
+    domain: "agents",
+    tags: ["Python", "Claude", "Gemini", "Groq", "Evals", "Data"],
+    tech: ["Python", "Claude Haiku", "NVIDIA NIM", "Gemini OCR", "Groq Whisper", "Prompt Caching"],
+    year: 2026,
+    weight: 2,
+    github: gh("personalized-message-router"),
+  },
+  {
     slug: "composio-research",
     name: "Agent-Toolkit Buildability Atlas",
     headline: "An agent pipeline researched 100 apps to answer one question: can we build a toolkit for it?",
