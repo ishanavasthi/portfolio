@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ishan Avasthi — Design 01 · Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #101010;
+    --text: #e8e8e8;
+    --text-dim: #a3a3a3;
+    --muted: #6b7280;
+    --border: #1e1e1e;
+    --accent: #6ee7b7;
+    --sans: "Inter", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --step: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .mono { font-family: var(--mono); }
+
+  /* ── Nav ─────────────────────────────── */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,10,10,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-brand { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  .nav-brand span { color: var(--accent); }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    letter-spacing: 0.04em; transition: color 0.18s ease;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* ── Section scaffolding: the ledger rule ── */
+  section { padding: 88px 0; border-bottom: 1px solid var(--border); }
+  .sec-head {
+    display: flex; align-items: baseline; gap: 16px; margin-bottom: 48px;
+  }
+  .sec-index { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .sec-title {
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.18em;
+  }
+  .sec-rule { flex: 1; height: 1px; background: var(--border); align-self: center; }
+
+  /* ── Hero ────────────────────────────── */
+  .hero { padding: 120px 0 96px; border-bottom: 1px solid var(--border); }
+  .hero-meta {
+    display: flex; gap: 24px; font-family: var(--mono); font-size: 12px;
+    color: var(--muted); margin-bottom: 32px; flex-wrap: wrap;
+  }
+  .hero-meta .dot { color: var(--accent); }
+  h1 {
+    font-size: clamp(44px, 7vw, 76px); font-weight: 600;
+    letter-spacing: -0.025em; line-height: 1.05;
+  }
+  .hero-role {
+    font-family: var(--mono); font-size: 15px; color: var(--accent);
+    margin-top: 20px;
+  }
+  .hero-role::after {
+    content: ""; display: inline-block; width: 8px; height: 1em;
+    background: var(--accent); margin-left: 6px; vertical-align: text-bottom;
+    animation: blink 1.1s steps(1, end) infinite;
+  }
+  @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+  .hero-desc {
+    margin-top: 28px; max-width: 620px; font-size: 19px;
+    line-height: 1.6; color: var(--text-dim);
+  }
+  .hero-desc strong { color: var(--text); font-weight: 500; }
+  .hero-actions { margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 13px; padding: 11px 20px;
+    border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #0a0a0a; font-weight: 500; }
+  .btn.primary:hover { background: #8ceec7; }
+
+  /* ── Stat strip ──────────────────────── */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat {
+    padding: 28px 24px; border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat b {
+    display: block; font-family: var(--mono); font-size: 28px;
+    font-weight: 500; color: var(--text); letter-spacing: -0.02em;
+  }
+  .stat span {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+
+  /* ── About ───────────────────────────── */
+  .about-text { max-width: 680px; font-size: 19px; line-height: 1.7; color: var(--text-dim); }
+  .about-text strong { color: var(--text); font-weight: 500; }
+
+  /* ── Skills: the spec table ──────────── */
+  .skill-row {
+    display: grid; grid-template-columns: 200px 1fr 140px;
+    gap: 24px; padding: 24px 0; border-top: 1px solid var(--border);
+  }
+  .skill-row:last-child { border-bottom: 1px solid var(--border); }
+  .skill-cat {
+    font-family: var(--mono); font-size: 13px; color: var(--text);
+    font-weight: 500;
+  }
+  .skill-cat em {
+    display: block; font-style: normal; font-size: 11px;
+    color: var(--muted); margin-top: 4px; font-weight: 400;
+  }
+  .skill-items { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+  .chip {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px;
+    transition: border-color 0.18s ease, color 0.18s ease;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.hot { color: var(--accent); border-color: rgba(110,231,183,0.35); }
+  .skill-proof {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    text-align: right; line-height: 1.5;
+  }
+  .skill-proof b { color: var(--accent); font-weight: 500; }
+
+  /* ── Projects: ledger rows ───────────── */
+  .proj {
+    display: grid; grid-template-columns: 56px 1fr auto;
+    gap: 20px; padding: 28px 0; border-top: 1px solid var(--border);
+    align-items: baseline; position: relative;
+    transition: background 0.18s ease;
+  }
+  .proj:last-of-type { border-bottom: 1px solid var(--border); }
+  .proj:hover { background: rgba(255,255,255,0.015); }
+  .proj:hover .proj-name { color: var(--accent); }
+  .proj-index { font-family: var(--mono); font-size: 12px; color: var(--muted); padding-top: 4px; }
+  .proj-name { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; transition: color 0.18s ease; }
+  .proj-head { font-size: 15px; color: var(--text-dim); margin-top: 6px; max-width: 560px; }
+  .proj-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .proj-tags span {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+  }
+  .proj-tags span::after { content: "·"; margin-left: 6px; color: var(--border); }
+  .proj-tags span:last-child::after { content: ""; }
+  .proj-side {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+  .proj-links { display: flex; gap: 14px; }
+  .proj-links a { color: var(--muted); transition: color 0.18s ease; border-bottom: 1px solid transparent; }
+  .proj-links a:hover { color: var(--accent); }
+  .view-all {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 36px;
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+    transition: color 0.18s ease;
+  }
+  .view-all:hover { color: var(--accent); }
+  .view-all:hover .arrow { transform: translateX(3px); }
+  .arrow { transition: transform 0.18s ease; }
+
+  /* ── Contact / footer ────────────────── */
+  .contact-big {
+    font-size: clamp(28px, 4.5vw, 44px); font-weight: 600;
+    letter-spacing: -0.02em; max-width: 720px; line-height: 1.25;
+  }
+  .contact-big a { color: var(--accent); border-bottom: 2px solid rgba(110,231,183,0.3); transition: border-color 0.18s ease; }
+  .contact-big a:hover { border-color: var(--accent); }
+  footer {
+    padding: 32px 0 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    flex-wrap: wrap; gap: 16px;
+  }
+  footer .links { display: flex; gap: 20px; }
+  footer a { transition: color 0.18s ease; }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--border); }
+    .skill-row { grid-template-columns: 1fr; gap: 12px; }
+    .skill-proof { text-align: left; }
+    .proj { grid-template-columns: 40px 1fr; }
+    .proj-side { grid-column: 2; flex-direction: row; align-items: center; }
+    .nav-links li:nth-child(n+4) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a href="#" class="nav-brand">ishan<span>@</span>avasthi<span>:~$</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">about</a></li>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#">blog</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-meta">
+      <span>IND · BITS Pilani</span>
+      <span class="dot">●</span>
+      <span>open to AI engineering roles</span>
+    </div>
+    <h1>Ishan Avasthi</h1>
+    <p class="hero-role">AI Engineer</p>
+    <p class="hero-desc">
+      I build the layer between raw language models and working products —
+      <strong>agent pipelines</strong>, <strong>RAG systems</strong>, and the
+      <strong>observability and evals</strong> that make them reliable enough to ship.
+    </p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#projects">View projects</a>
+      <a class="btn" href="https://github.com/ishanavasthi">GitHub ↗</a>
+      <a class="btn" href="mailto:hello@ishanavasthi.in">hello@ishanavasthi.in</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap stats">
+  <div class="stat"><b>35</b><span>projects shipped</span></div>
+  <div class="stat"><b>6</b><span>domains</span></div>
+  <div class="stat"><b>10</b><span>agent systems</span></div>
+  <div class="stat"><b>2023—</b><span>shipping since</span></div>
+</div>
+
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-index">01</span>
+      <span class="sec-title">About</span>
+      <span class="sec-rule"></span>
+    </div>
+    <p class="about-text">
+      I'm a CS undergrad at BITS Pilani working on AI engineering. I build
+      <strong>pipelines that retrieve the right context</strong>,
+      <strong>agents that take actions</strong>, and
+      <strong>tooling that makes the whole thing reliable</strong>.
+      I care about testing things properly, making systems easy to work with,
+      and shipping stuff that holds up in the real world.
+    </p>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-index">02</span>
+      <span class="sec-title">Skills — with receipts</span>
+      <span class="sec-rule"></span>
+    </div>
+
+    <div class="skill-row">
+      <div class="skill-cat">Agents &amp; LLM Systems<em>the core focus</em></div>
+      <div class="skill-items">
+        <span class="chip hot">Multi-agent pipelines</span>
+        <span class="chip hot">MCP</span>
+        <span class="chip hot">Tool calling</span>
+        <span class="chip">Claude API</span>
+        <span class="chip">Gemini</span>
+        <span class="chip">Groq</span>
+        <span class="chip">LangGraph</span>
+        <span class="chip">Voice agents · LiveKit</span>
+        <span class="chip">RAG · ChromaDB</span>
+      </div>
+      <div class="skill-proof"><b>12</b> projects<br />Preflight, ClinicFlow…</div>
+    </div>
+
+    <div class="skill-row">
+      <div class="skill-cat">Evals &amp; Reliability<em>what makes agents shippable</em></div>
+      <div class="skill-items">
+        <span class="chip hot">Agent evals</span>
+        <span class="chip hot">OpenTelemetry tracing</span>
+        <span class="chip">RL environments · OpenEnv</span>
+        <span class="chip">CI regression gates</span>
+        <span class="chip">Deterministic guardrails</span>
+        <span class="chip">SigNoz / ClickHouse</span>
+      </div>
+      <div class="skill-proof"><b>7</b> projects<br />Preflight, RecruitEnv…</div>
+    </div>
+
+    <div class="skill-row">
+      <div class="skill-cat">Languages<em>daily drivers first</em></div>
+      <div class="skill-items">
+        <span class="chip hot">Python</span>
+        <span class="chip hot">TypeScript</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">Java</span>
+        <span class="chip">SQL</span>
+        <span class="chip">C#</span>
+      </div>
+      <div class="skill-proof"><b>13</b> Python · <b>10</b> TS</div>
+    </div>
+
+    <div class="skill-row">
+      <div class="skill-cat">Backend &amp; Infra</div>
+      <div class="skill-items">
+        <span class="chip">FastAPI</span>
+        <span class="chip">Node / Express</span>
+        <span class="chip">Spring Boot</span>
+        <span class="chip">Postgres</span>
+        <span class="chip">Docker</span>
+        <span class="chip">GitHub Actions</span>
+        <span class="chip">AWS</span>
+        <span class="chip">asyncio / TCP</span>
+      </div>
+      <div class="skill-proof"><b>15+</b> services built</div>
+    </div>
+
+    <div class="skill-row">
+      <div class="skill-cat">Frontend</div>
+      <div class="skill-items">
+        <span class="chip">Next.js</span>
+        <span class="chip">React</span>
+        <span class="chip">Tailwind CSS</span>
+        <span class="chip">React Native</span>
+        <span class="chip">Chrome Extensions · MV3</span>
+      </div>
+      <div class="skill-proof"><b>9</b> UIs shipped</div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-index">03</span>
+      <span class="sec-title">Selected projects</span>
+      <span class="sec-rule"></span>
+    </div>
+
+    <a class="proj" href="https://github.com/ishanavasthi/preflight">
+      <span class="proj-index">001</span>
+      <div>
+        <div class="proj-name">Preflight</div>
+        <p class="proj-head">CI gate that catches AI agent regressions — cost, latency, tokens, success rate — before they ship. A diagnosis agent explains each failed gate over MCP.</p>
+        <div class="proj-tags"><span>Python</span><span>OpenTelemetry</span><span>MCP</span><span>Claude API</span><span>SigNoz</span></div>
+      </div>
+      <div class="proj-side"><span>2026</span><div class="proj-links"><span>code ↗</span><span>demo ↗</span></div></div>
+    </a>
+
+    <a class="proj" href="https://github.com/ishanavasthi/clinicflow">
+      <span class="proj-index">002</span>
+      <div>
+        <div class="proj-name">ClinicFlow</div>
+        <p class="proj-head">Real-time AI voice receptionist for clinics — barge-in capable LiveKit pipeline, auditable function tools, deterministic guardrails, live operator dashboard.</p>
+        <div class="proj-tags"><span>Python</span><span>LiveKit</span><span>Deepgram</span><span>FastAPI</span><span>Next.js</span></div>
+      </div>
+      <div class="proj-side"><span>2026</span><div class="proj-links"><span>code ↗</span><span>demo ↗</span></div></div>
+    </a>
+
+    <a class="proj" href="https://github.com/ishanavasthi/agentgrid">
+      <span class="proj-index">003</span>
+      <div>
+        <div class="proj-name">AgentGrid</div>
+        <p class="proj-head">Nine Gemini agents take an issue from bug report to tested, merged PR with zero human intervention — context-preserving handoffs, conflict resolution, live dashboard.</p>
+        <div class="proj-tags"><span>Python</span><span>Gemini</span><span>Multi-Agent</span><span>SSE</span></div>
+      </div>
+      <div class="proj-side"><span>2026</span><div class="proj-links"><span>code ↗</span><span>demo ↗</span></div></div>
+    </a>
+
+    <a class="proj" href="https://github.com/ishanavasthi/alphadesk">
+      <span class="proj-index">004</span>
+      <div>
+        <div class="proj-name">AlphaDesk</div>
+        <p class="proj-head">Multi-agent Indian equity research desk — LangGraph, live NSE data, RAG over filings, human approval checkpoints, real-time dashboard.</p>
+        <div class="proj-tags"><span>LangGraph</span><span>FastAPI</span><span>Next.js</span><span>ChromaDB</span></div>
+      </div>
+      <div class="proj-side"><span>2026</span><div class="proj-links"><span>code ↗</span><span>demo ↗</span></div></div>
+    </a>
+
+    <a class="proj" href="https://github.com/ishanavasthi/swiggy-claw">
+      <span class="proj-index">005</span>
+      <div>
+        <div class="proj-name">Swiggy Claw</div>
+        <p class="proj-head">Order food, groceries, and tables in plain English over Swiggy's MCP platform — Groq tool calling, resilient retries, streaming chat UI.</p>
+        <div class="proj-tags"><span>TypeScript</span><span>Next.js</span><span>MCP</span><span>Groq</span></div>
+      </div>
+      <div class="proj-side"><span>2026</span><div class="proj-links"><span>code ↗</span><span>live ↗</span></div></div>
+    </a>
+
+    <a class="proj" href="https://github.com/ishanavasthi/reviewgrid">
+      <span class="proj-index">006</span>
+      <div>
+        <div class="proj-name">ReviewGrid</div>
+        <p class="proj-head">Agent-callable code review skill: POST a diff, get a deterministic pass / needs_changes / fail verdict with line-anchored issues. Same diff, same grade, every time.</p>
+        <div class="proj-tags"><span>TypeScript</span><span>Deno</span><span>Static Analysis</span></div>
+      </div>
+      <div class="proj-side"><span>2026</span><div class="proj-links"><span>code ↗</span><span>live ↗</span></div></div>
+    </a>
+
+    <a class="view-all" href="#">View all 35 projects <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<section id="contact" style="border-bottom: none;">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-index">04</span>
+      <span class="sec-title">Contact</span>
+      <span class="sec-rule"></span>
+    </div>
+    <p class="contact-big">
+      Building something with agents?<br />
+      Let's talk — <a href="mailto:hello@ishanavasthi.in">hello@ishanavasthi.in</a>
+    </p>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer>
+    <span>© 2026 Ishan Avasthi · design 01 “ledger” (mockup)</span>
+    <div class="links">
+      <a href="https://github.com/ishanavasthi">GitHub</a>
+      <a href="https://www.linkedin.com/in/ishanavasthi">LinkedIn</a>
+      <a href="mailto:hello@ishanavasthi.in">Email</a>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>

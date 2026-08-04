@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ishan Avasthi — Design 03 · Bento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b0d10;
+    --tile: #111419;
+    --tile-hover: #14181e;
+    --text: #ecedee;
+    --text-dim: #9ba1a6;
+    --muted: #62676c;
+    --border: #22262c;
+    --accent: #7c8cf8;
+    --accent-soft: rgba(124,140,248,0.14);
+    --sans: "Inter", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --r: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans); font-size: 15.5px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    background-image: radial-gradient(ellipse 900px 500px at 50% -100px, rgba(124,140,248,0.08), transparent);
+  }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Nav ─────────────────────────────── */
+  nav {
+    position: sticky; top: 16px; z-index: 10; margin-top: 16px;
+  }
+  .nav-pill {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(17,20,25,0.8); backdrop-filter: blur(14px);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 10px 22px;
+  }
+  .brand { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+  .brand::before { content: "◆ "; color: var(--accent); font-size: 11px; vertical-align: 2px; }
+  .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+  .nav-links a { font-size: 13.5px; font-weight: 500; color: var(--text-dim); transition: color 0.18s ease; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.cta {
+    background: var(--accent); color: #0b0d10; padding: 7px 16px;
+    border-radius: 999px; transition: filter 0.18s ease;
+  }
+  .nav-links a.cta:hover { color: #0b0d10; filter: brightness(1.12); }
+
+  /* ── The bento grid ──────────────────── */
+  .bento {
+    display: grid; grid-template-columns: repeat(12, 1fr);
+    gap: 14px; padding: 56px 0 24px;
+  }
+  .tile {
+    background: var(--tile); border: 1px solid var(--border);
+    border-radius: var(--r); padding: 28px;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    position: relative; overflow: hidden;
+  }
+  .tile:hover { border-color: rgba(124,140,248,0.45); background: var(--tile-hover); }
+  a.tile:hover { transform: translateY(-2px); }
+  .t-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+  }
+
+  /* Hero tile */
+  .t-hero { grid-column: span 8; padding: 40px; }
+  .t-hero .status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    background: var(--accent-soft); border: 1px solid rgba(124,140,248,0.25);
+    padding: 5px 14px; border-radius: 999px; margin-bottom: 24px;
+  }
+  .t-hero .status::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: #4ade80; box-shadow: 0 0 8px #4ade80;
+  }
+  .t-hero h1 { font-size: clamp(34px, 4.6vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; }
+  .t-hero h1 span { color: var(--accent); }
+  .t-hero p { margin-top: 18px; font-size: 17px; color: var(--text-dim); max-width: 540px; }
+  .t-hero .actions { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    font-size: 14px; font-weight: 600; padding: 11px 22px; border-radius: 10px;
+    border: 1px solid var(--border); transition: all 0.18s ease;
+  }
+  .btn.solid { background: var(--accent); border-color: var(--accent); color: #0b0d10; }
+  .btn.solid:hover { filter: brightness(1.12); }
+  .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Photo/identity tile */
+  .t-id {
+    grid-column: span 4; display: flex; flex-direction: column;
+    justify-content: space-between; gap: 20px;
+    background: linear-gradient(160deg, var(--tile), rgba(124,140,248,0.06));
+  }
+  .t-id .avatar {
+    width: 72px; height: 72px; border-radius: 20px;
+    background: var(--accent-soft); border: 1px solid rgba(124,140,248,0.3);
+    display: grid; place-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--accent); font-weight: 500;
+  }
+  .t-id p { font-size: 14.5px; color: var(--text-dim); }
+  .t-id p b { color: var(--text); font-weight: 600; }
+  .t-id .socials { display: flex; gap: 10px; }
+  .t-id .socials a {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px;
+    transition: all 0.18s ease;
+  }
+  .t-id .socials a:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Stat tiles */
+  .t-stat { grid-column: span 3; text-align: left; }
+  .t-stat b {
+    display: block; font-size: 38px; font-weight: 700;
+    letter-spacing: -0.03em; line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .t-stat b i { font-style: normal; color: var(--accent); }
+  .t-stat span { font-size: 13px; color: var(--text-dim); display: block; margin-top: 8px; }
+
+  /* Skills tiles */
+  .t-skill { grid-column: span 6; }
+  .t-skill.wide { grid-column: span 6; }
+  .t-skill h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .t-skill .proof { font-family: var(--mono); font-size: 11.5px; color: var(--accent); margin-top: 3px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .chips span {
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    padding: 5px 12px; border-radius: 8px; transition: all 0.18s ease;
+  }
+  .chips span:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .chips span.hot { color: var(--accent); border-color: rgba(124,140,248,0.4); background: var(--accent-soft); }
+
+  /* Project tiles */
+  .t-proj { grid-column: span 6; display: flex; flex-direction: column; }
+  .t-proj .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .t-proj h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.015em; }
+  .t-proj .year { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+  .t-proj p { margin-top: 10px; font-size: 14.5px; color: var(--text-dim); flex: 1; }
+  .t-proj .tech {
+    margin-top: 18px; font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+  }
+  .t-proj .go {
+    position: absolute; top: 22px; right: 22px; opacity: 0; color: var(--accent);
+    transition: opacity 0.2s ease, transform 0.2s ease; transform: translate(-4px, 4px);
+    font-size: 18px;
+  }
+  .t-proj:hover .go { opacity: 1; transform: translate(0,0); }
+  .t-proj:hover h3 { color: var(--accent); }
+  .t-proj h3 { transition: color 0.18s ease; }
+
+  /* Section spanning tiles */
+  .t-section-head {
+    grid-column: span 12; background: none; border: none; padding: 36px 4px 4px;
+  }
+  .t-section-head h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .t-section-head p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .t-section-head .row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; }
+  .t-section-head a { font-family: var(--mono); font-size: 13px; color: var(--text-dim); transition: color 0.18s ease; }
+  .t-section-head a:hover { color: var(--accent); }
+
+  /* Contact tile */
+  .t-contact {
+    grid-column: span 12; text-align: center; padding: 56px 28px;
+    background: linear-gradient(180deg, var(--tile), rgba(124,140,248,0.07));
+  }
+  .t-contact h2 { font-size: clamp(26px, 3.6vw, 38px); font-weight: 700; letter-spacing: -0.025em; }
+  .t-contact p { color: var(--text-dim); margin-top: 10px; }
+  .t-contact .actions { margin-top: 26px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  footer {
+    padding: 32px 0 48px; display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 16px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+  footer .links { display: flex; gap: 20px; }
+  footer a { transition: color 0.18s ease; }
+  footer a:hover { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .t-hero, .t-id { grid-column: span 12; }
+    .t-stat { grid-column: span 6; }
+    .t-skill, .t-proj { grid-column: span 12; }
+  }
+  @media (max-width: 520px) {
+    .t-stat { grid-column: span 6; }
+    .nav-links li:not(:last-child) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="nav-pill">
+      <a class="brand" href="#">Ishan Avasthi</a>
+      <ul class="nav-links">
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a class="cta" href="mailto:hello@ishanavasthi.in">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="bento">
+
+    <!-- Hero -->
+    <section class="tile t-hero">
+      <span class="status">open to AI engineering roles</span>
+      <h1>I make language models<br /><span>do real work.</span></h1>
+      <p>AI engineer building agent pipelines, RAG systems, and the evals
+      and observability that make them reliable enough to ship.</p>
+      <div class="actions">
+        <a class="btn solid" href="#projects">View projects</a>
+        <a class="btn ghost" href="https://github.com/ishanavasthi">GitHub ↗</a>
+      </div>
+    </section>
+
+    <!-- Identity -->
+    <section class="tile t-id">
+      <div class="avatar">IA</div>
+      <p><b>CS undergrad @ BITS Pilani.</b> I care about testing things properly,
+      making systems easy to work with, and shipping stuff that holds up in
+      the real world.</p>
+      <div class="socials">
+        <a href="https://github.com/ishanavasthi">GitHub</a>
+        <a href="https://www.linkedin.com/in/ishanavasthi">LinkedIn</a>
+        <a href="mailto:hello@ishanavasthi.in">Email</a>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="tile t-stat"><b>35</b><span>projects shipped</span></section>
+    <section class="tile t-stat"><b>10</b><span>agent systems built</span></section>
+    <section class="tile t-stat"><b>6</b><span>domains of work</span></section>
+    <section class="tile t-stat"><b>2023<i>—</i></b><span>shipping since</span></section>
+
+    <!-- Skills -->
+    <div class="t-section-head" id="skills">
+      <h2>Skills</h2>
+      <p>Every chip below is backed by shipped code — no résumé padding.</p>
+    </div>
+
+    <section class="tile t-skill">
+      <h3>Agents &amp; LLM Systems</h3>
+      <p class="proof">core focus · 12 projects</p>
+      <div class="chips">
+        <span class="hot">Multi-agent pipelines</span>
+        <span class="hot">MCP</span>
+        <span class="hot">Tool calling</span>
+        <span>Claude API</span><span>Gemini</span><span>Groq</span>
+        <span>LangGraph</span><span>Voice AI · LiveKit</span><span>RAG</span>
+      </div>
+    </section>
+
+    <section class="tile t-skill">
+      <h3>Evals &amp; Reliability</h3>
+      <p class="proof">what makes agents shippable · 7 projects</p>
+      <div class="chips">
+        <span class="hot">Agent evals</span>
+        <span class="hot">OpenTelemetry</span>
+        <span>RL envs · OpenEnv</span><span>CI regression gates</span>
+        <span>Deterministic guardrails</span><span>SigNoz / ClickHouse</span>
+      </div>
+    </section>
+
+    <section class="tile t-skill">
+      <h3>Languages &amp; Backend</h3>
+      <p class="proof">13 Python · 10 TypeScript projects</p>
+      <div class="chips">
+        <span class="hot">Python</span><span class="hot">TypeScript</span>
+        <span>JavaScript</span><span>Java</span><span>FastAPI</span>
+        <span>Node / Express</span><span>Postgres</span><span>Docker</span><span>AWS</span>
+      </div>
+    </section>
+
+    <section class="tile t-skill">
+      <h3>Frontend &amp; Product</h3>
+      <p class="proof">9 UIs shipped</p>
+      <div class="chips">
+        <span>Next.js</span><span>React</span><span>Tailwind CSS</span>
+        <span>React Native</span><span>Chrome MV3</span><span>Streaming chat UIs</span>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <div class="t-section-head" id="projects">
+      <div class="row">
+        <div>
+          <h2>Featured projects</h2>
+          <p>Six of thirty-five — the rest live in the archive.</p>
+        </div>
+        <a href="#">View all 35 →</a>
+      </div>
+    </div>
+
+    <a class="tile t-proj" href="https://github.com/ishanavasthi/preflight">
+      <span class="go">↗</span>
+      <div class="top"><h3>Preflight</h3><span class="year">2026</span></div>
+      <p>CI gate that catches AI agent regressions — cost, latency, tokens, success
+      rate — before they ship. A diagnosis agent explains each failed gate over MCP.</p>
+      <div class="tech">Python · OpenTelemetry · MCP · Claude API · SigNoz</div>
+    </a>
+
+    <a class="tile t-proj" href="https://github.com/ishanavasthi/clinicflow">
+      <span class="go">↗</span>
+      <div class="top"><h3>ClinicFlow</h3><span class="year">2026</span></div>
+      <p>Real-time AI voice receptionist for clinics with a live operator dashboard —
+      barge-in capable pipeline, auditable tools, deterministic guardrails.</p>
+      <div class="tech">Python · LiveKit · Deepgram · FastAPI · Next.js</div>
+    </a>
+
+    <a class="tile t-proj" href="https://github.com/ishanavasthi/agentgrid">
+      <span class="go">↗</span>
+      <div class="top"><h3>AgentGrid</h3><span class="year">2026</span></div>
+      <p>Nine Gemini agents take an issue from bug report to tested, merged PR with
+      zero human intervention — handoffs, conflict resolution, live dashboard.</p>
+      <div class="tech">Python · Gemini · Multi-Agent · SSE</div>
+    </a>
+
+    <a class="tile t-proj" href="https://github.com/ishanavasthi/alphadesk">
+      <span class="go">↗</span>
+      <div class="top"><h3>AlphaDesk</h3><span class="year">2026</span></div>
+      <p>Multi-agent Indian equity research desk — LangGraph, live NSE data, RAG over
+      filings, human approval checkpoints, real-time dashboard.</p>
+      <div class="tech">LangGraph · FastAPI · Next.js · ChromaDB</div>
+    </a>
+
+    <a class="tile t-proj" href="https://github.com/ishanavasthi/swiggy-claw">
+      <span class="go">↗</span>
+      <div class="top"><h3>Swiggy Claw</h3><span class="year">2026</span></div>
+      <p>Order food, groceries, and tables in plain English over Swiggy's MCP
+      platform — Groq tool calling, resilient retries, streaming chat UI.</p>
+      <div class="tech">TypeScript · Next.js · MCP · Groq</div>
+    </a>
+
+    <a class="tile t-proj" href="https://github.com/ishanavasthi/reviewgrid">
+      <span class="go">↗</span>
+      <div class="top"><h3>ReviewGrid</h3><span class="year">2026</span></div>
+      <p>Agent-callable code review skill returning a deterministic pass /
+      needs-changes / fail verdict with line-anchored issues. Same diff, same grade.</p>
+      <div class="tech">TypeScript · Deno · Static Analysis</div>
+    </a>
+
+    <!-- Contact -->
+    <section class="tile t-contact">
+      <h2>Let's build something that actually ships.</h2>
+      <p>Recruiting, collaborating, or just curious about agents — my inbox is open.</p>
+      <div class="actions">
+        <a class="btn solid" href="mailto:hello@ishanavasthi.in">hello@ishanavasthi.in</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/ishanavasthi">LinkedIn ↗</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>© 2026 Ishan Avasthi · design 03 “bento” (mockup)</span>
+    <div class="links">
+      <a href="https://github.com/ishanavasthi">GitHub</a>
+      <a href="https://www.linkedin.com/in/ishanavasthi">LinkedIn</a>
+      <a href="mailto:hello@ishanavasthi.in">Email</a>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>
