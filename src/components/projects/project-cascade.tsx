@@ -71,11 +71,13 @@ export function ProjectCascade({
   const columnCount = useColumnCount();
 
   const columns = React.useMemo(() => {
-    const buckets: Project[][] = Array.from(
+    const buckets: { project: Project; index: number }[][] = Array.from(
       { length: columnCount },
       () => [],
     );
-    projects.forEach((p, i) => buckets[i % columnCount].push(p));
+    projects.forEach((p, i) =>
+      buckets[i % columnCount].push({ project: p, index: i + 1 }),
+    );
     return buckets;
   }, [projects, columnCount]);
 
@@ -95,10 +97,11 @@ export function ProjectCascade({
           // keep their width instead of stretching to fill the row.
           aria-hidden={column.length === 0 ? true : undefined}
         >
-          {column.map((p) => (
+          {column.map(({ project: p, index }) => (
             <div key={p.slug} id={`project-${p.slug}`} className="scroll-mt-24">
               <ProjectCard
                 project={p}
+                index={index}
                 onTagClick={onTagClick}
                 activeTags={activeTags}
               />

@@ -35,6 +35,8 @@ import {
 } from "@/lib/taxonomy";
 import { motion, type Variants } from "framer-motion";
 
+const staticCapture = process.env.NEXT_PUBLIC_STATIC_CAPTURE === "1";
+
 const VALID_DOMAINS = new Set<string>(DOMAINS.map((d) => d.id));
 const VALID_TAGS = new Set<string>(ALL_TAGS);
 
@@ -164,13 +166,19 @@ export function ProjectExplorer() {
               hidden: {},
               show: { transition: { staggerChildren: 0.07 } },
             }}
-            initial="hidden"
-            whileInView="show"
+            initial={staticCapture ? "show" : "hidden"}
+            whileInView={staticCapture ? undefined : "show"}
+            animate={staticCapture ? "show" : undefined}
             viewport={{ once: true, margin: "-10% 0px" }}
             className="grid grid-cols-1 gap-4 md:grid-cols-2"
           >
-            {featuredProjects.map((p) => (
-              <ProjectCard key={p.slug} project={p} variant="featured" />
+            {featuredProjects.map((p, i) => (
+              <ProjectCard
+                key={p.slug}
+                project={p}
+                variant="featured"
+                index={i + 1}
+              />
             ))}
           </motion.div>
         </section>
@@ -216,8 +224,9 @@ export function ProjectExplorer() {
               <motion.section
                 key={d.id}
                 variants={sectionVariants}
-                initial="hidden"
-                whileInView="show"
+                initial={staticCapture ? "show" : "hidden"}
+                whileInView={staticCapture ? undefined : "show"}
+                animate={staticCapture ? "show" : undefined}
                 viewport={{ once: true, margin: "-8% 0px" }}
                 className="flex flex-col gap-5"
               >
@@ -264,7 +273,7 @@ export function ProjectExplorer() {
                   <CollapsibleTrigger asChild>
                     <button
                       type="button"
-                      className="text-muted-foreground hover:text-foreground group flex w-full cursor-pointer items-center gap-2 text-left transition-colors"
+                      className="group flex w-full cursor-pointer items-center gap-2 text-left text-muted-foreground transition-colors duration-[180ms] ease-out hover:text-accent"
                     >
                       <ChevronRight
                         className="size-4 transition-transform group-data-[state=open]:rotate-90"
@@ -277,7 +286,7 @@ export function ProjectExplorer() {
                     </button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="pt-6">
-                    <p className="text-muted-foreground mb-5 max-w-xl text-sm leading-relaxed">
+                    <p className="mb-5 max-w-xl text-sm leading-relaxed text-[var(--text-dim)]">
                       {d.blurb}
                     </p>
                     <ProjectCascade
@@ -299,7 +308,7 @@ export function ProjectExplorer() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-muted-foreground font-mono text-xs tracking-widest uppercase">
+    <p className="font-mono text-[13px] tracking-[0.18em] text-muted-foreground uppercase">
       {children}
     </p>
   );
@@ -315,14 +324,16 @@ function DomainHeading({
   count: number;
 }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 border-t border-border pt-6">
       <div className="flex items-baseline gap-2">
         <h2 className="text-foreground text-sm font-semibold tracking-[-0.01em]">
           {label}
         </h2>
-        <span className="text-muted-foreground font-mono text-xs">{count}</span>
+        <span className="font-mono text-xs text-muted-foreground">
+          {count}
+        </span>
       </div>
-      <p className="text-muted-foreground max-w-xl text-sm leading-relaxed">
+      <p className="max-w-xl text-sm leading-relaxed text-[var(--text-dim)]">
         {blurb}
       </p>
     </div>
