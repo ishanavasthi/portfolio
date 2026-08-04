@@ -1,6 +1,7 @@
 import { site, socials } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { getAllPosts } from "@/lib/blog";
+import { SKILLS } from "@/lib/skills";
 
 export const dynamic = "force-static";
 
@@ -10,6 +11,18 @@ function projectsSection(): string {
     return `- [${p.name}](${url}): ${p.description}`;
   });
   return ["## Projects", "", ...lines].join("\n");
+}
+
+function skillsSection(): string {
+  const lines = SKILLS.map((category) => {
+    const chips = category.chips.map((c) => c.label).join(", ");
+    const proof = category.proof();
+    const proofText = proof.secondaryValue
+      ? `${proof.value} ${proof.unit}, ${proof.secondaryValue} ${proof.secondaryUnit}`
+      : `${proof.value} ${proof.unit}`;
+    return `- **${category.name}**${category.sub ? ` (${category.sub})` : ""}: ${chips} — ${proofText}`;
+  });
+  return ["## Skills", "", ...lines].join("\n");
 }
 
 function writingSection(): string {
@@ -41,6 +54,8 @@ function buildLlmsTxt(): string {
     `> ${site.title} — ${site.description}`,
     "",
     "Personal portfolio. Source of truth for projects and writing.",
+    "",
+    skillsSection(),
     "",
     projectsSection(),
     "",

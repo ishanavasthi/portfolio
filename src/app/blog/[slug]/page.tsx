@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { ArrowLeft } from "lucide-react";
 import {
   formatPostDate,
   getAllPostSlugs,
   getPost,
 } from "@/lib/blog";
+import { BackLink } from "@/components/layout/back-link";
 
 type Params = { slug: string };
 
@@ -41,19 +40,16 @@ export default async function BlogPostPage({
   return (
     <article className="px-4 py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-3xl">
-        <Link
-          href="/blog"
-          className="text-muted-foreground hover:text-[--accent] inline-flex items-center gap-1.5 font-mono text-xs tracking-tight transition-colors"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
-          back to blog
-        </Link>
+        <BackLink href="/blog" label="back to blog" />
 
-        <header className="mt-10">
-          <h1 className="text-foreground text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
+        <header className="mt-10 border-b border-border pb-10">
+          <p className="text-muted-foreground font-mono text-[13px] tracking-[0.18em] uppercase">
+            Blog
+          </p>
+          <h1 className="text-foreground mt-3 text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
             {post.title}
           </h1>
-          <div className="text-muted-foreground mt-4 flex items-center gap-3 font-mono text-xs">
+          <div className="text-muted-foreground mt-5 flex items-center gap-3 font-mono text-xs">
             <time dateTime={post.date}>{formatPostDate(post.date)}</time>
             <span aria-hidden className="bg-border h-3 w-px" />
             <span>{post.readingTime} min read</span>
