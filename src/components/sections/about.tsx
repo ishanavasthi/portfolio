@@ -1,8 +1,10 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
+import { SectionHead } from "@/components/layout/section-head";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+const staticCapture = process.env.NEXT_PUBLIC_STATIC_CAPTURE === "1";
 
 const container: Variants = {
   hidden: {},
@@ -16,33 +18,42 @@ const item: Variants = {
 
 export function About() {
   return (
-    <section id="about" className="px-4 py-12 md:px-6 md:py-16">
-      <motion.div
-        variants={container}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-15% 0px" }}
-        className="mx-auto max-w-3xl"
-      >
-        <motion.p
-          variants={item}
-          className="text-muted-foreground font-mono text-xs tracking-widest uppercase"
-        >
-          About
-        </motion.p>
+    <section
+      id="about"
+      className="border-b border-border py-[88px]"
+    >
+      <div className="mx-auto max-w-[1080px] px-6">
+        <SectionHead index="01" title="About" />
 
-        <motion.p
-          variants={item}
-          className="text-foreground/90 mt-6 text-lg leading-relaxed md:text-xl"
+        <motion.div
+          variants={container}
+          initial={staticCapture ? "show" : "hidden"}
+          whileInView={staticCapture ? undefined : "show"}
+          animate={staticCapture ? "show" : undefined}
+          viewport={{ once: true, margin: "-15% 0px" }}
         >
-          I&apos;m a CS undergrad at BITS Pilani working on AI engineering. 
-          I build the layer between raw language models and working products: 
-          pipelines that retrieve the right context, agents that take actions, 
-          and tooling that makes the whole thing reliable. 
-          I care about testing things properly, making systems easy to work with, 
-          and shipping stuff that holds up in the real world.
-        </motion.p>
-      </motion.div>
+          <motion.p
+            variants={item}
+            className="max-w-[680px] text-[19px] leading-[1.7] text-[var(--text-dim)]"
+          >
+            I&apos;m a CS undergrad at BITS Pilani working on AI engineering.
+            I build{" "}
+            <strong className="font-medium text-foreground">
+              pipelines that retrieve the right context
+            </strong>
+            ,{" "}
+            <strong className="font-medium text-foreground">
+              agents that take actions
+            </strong>
+            , and{" "}
+            <strong className="font-medium text-foreground">
+              tooling that makes the whole thing reliable
+            </strong>
+            . I care about testing things properly, making systems easy to
+            work with, and shipping stuff that holds up in the real world.
+          </motion.p>
+        </motion.div>
+      </div>
     </section>
   );
 }
