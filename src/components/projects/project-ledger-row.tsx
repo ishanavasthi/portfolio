@@ -53,7 +53,9 @@ export function ProjectLedgerRow({
         <span>{project.year}</span>
         <div className="flex gap-3.5">
           {project.github && <span>code ↗</span>}
-          {project.live && <span>{project.github ? "demo" : "live"} ↗</span>}
+          {project.live && (
+            <span>{project.live.includes("video") ? "demo" : "live"} ↗</span>
+          )}
         </div>
       </div>
     </Link>

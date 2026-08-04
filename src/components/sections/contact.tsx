@@ -3,9 +3,9 @@
 import { motion, type Variants } from "framer-motion";
 import { SectionHead } from "@/components/layout/section-head";
 import { socials } from "@/lib/site";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-const staticCapture = process.env.NEXT_PUBLIC_STATIC_CAPTURE === "1";
 
 const container: Variants = {
   hidden: {},
@@ -20,6 +20,7 @@ const item: Variants = {
 const email = socials.email.replace(/^mailto:/, "");
 
 export function Contact() {
+  const skipEntrance = useSkipEntrance();
   return (
     <section id="contact" className="py-[88px]">
       <div className="mx-auto max-w-[1080px] px-6">
@@ -27,9 +28,9 @@ export function Contact() {
 
         <motion.div
           variants={container}
-          initial={staticCapture ? "show" : "hidden"}
-          whileInView={staticCapture ? undefined : "show"}
-          animate={staticCapture ? "show" : undefined}
+          initial={skipEntrance ? "show" : "hidden"}
+          whileInView={skipEntrance ? undefined : "show"}
+          animate={skipEntrance ? "show" : undefined}
           viewport={{ once: true, margin: "-15% 0px" }}
         >
           <motion.p

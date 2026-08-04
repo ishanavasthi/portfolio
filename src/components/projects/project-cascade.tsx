@@ -5,6 +5,7 @@ import { motion, type Variants } from "framer-motion";
 import type { Project } from "@/lib/projects";
 import { ProjectCard } from "@/components/projects/project-card";
 import { cn } from "@/lib/utils";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const container: Variants = {
   hidden: {},
@@ -69,6 +70,7 @@ export function ProjectCascade({
   className?: string;
 }) {
   const columnCount = useColumnCount();
+  const skipEntrance = useSkipEntrance();
 
   const columns = React.useMemo(() => {
     const buckets: { project: Project; index: number }[][] = Array.from(
@@ -85,7 +87,7 @@ export function ProjectCascade({
     <motion.div
       key={cascadeKey}
       variants={container}
-      initial="hidden"
+      initial={skipEntrance ? "show" : "hidden"}
       animate="show"
       className={cn("flex items-start gap-4", className)}
     >

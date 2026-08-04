@@ -34,8 +34,7 @@ import {
   type TagGroupId,
 } from "@/lib/taxonomy";
 import { motion, type Variants } from "framer-motion";
-
-const staticCapture = process.env.NEXT_PUBLIC_STATIC_CAPTURE === "1";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const VALID_DOMAINS = new Set<string>(DOMAINS.map((d) => d.id));
 const VALID_TAGS = new Set<string>(ALL_TAGS);
@@ -60,6 +59,7 @@ const sectionVariants: Variants = {
 };
 
 export function ProjectExplorer() {
+  const skipEntrance = useSkipEntrance();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -166,9 +166,9 @@ export function ProjectExplorer() {
               hidden: {},
               show: { transition: { staggerChildren: 0.07 } },
             }}
-            initial={staticCapture ? "show" : "hidden"}
-            whileInView={staticCapture ? undefined : "show"}
-            animate={staticCapture ? "show" : undefined}
+            initial={skipEntrance ? "show" : "hidden"}
+            whileInView={skipEntrance ? undefined : "show"}
+            animate={skipEntrance ? "show" : undefined}
             viewport={{ once: true, margin: "-10% 0px" }}
             className="grid grid-cols-1 gap-4 md:grid-cols-2"
           >
@@ -224,9 +224,9 @@ export function ProjectExplorer() {
               <motion.section
                 key={d.id}
                 variants={sectionVariants}
-                initial={staticCapture ? "show" : "hidden"}
-                whileInView={staticCapture ? undefined : "show"}
-                animate={staticCapture ? "show" : undefined}
+                initial={skipEntrance ? "show" : "hidden"}
+                whileInView={skipEntrance ? undefined : "show"}
+                animate={skipEntrance ? "show" : undefined}
                 viewport={{ once: true, margin: "-8% 0px" }}
                 className="flex flex-col gap-5"
               >

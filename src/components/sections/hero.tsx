@@ -3,9 +3,9 @@
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { site, socials } from "@/lib/site";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-const staticCapture = process.env.NEXT_PUBLIC_STATIC_CAPTURE === "1";
 
 const container: Variants = {
   hidden: {},
@@ -27,11 +27,12 @@ const btnBase =
   "inline-flex items-center gap-2 rounded-[6px] border border-border px-5 py-[11px] font-mono text-[13px] text-foreground transition-colors duration-[0.18s] ease-out hover:border-accent hover:text-accent";
 
 export function Hero() {
+  const skipEntrance = useSkipEntrance();
   return (
     <section className="border-b border-border pt-[120px] pb-24">
       <motion.div
         variants={container}
-        initial={staticCapture ? "show" : "hidden"}
+        initial={skipEntrance ? "show" : "hidden"}
         animate="show"
         className="mx-auto max-w-[1080px] px-6"
       >

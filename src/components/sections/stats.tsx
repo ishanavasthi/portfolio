@@ -4,9 +4,9 @@ import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { projects, projectsByDomain } from "@/lib/projects";
 import { DOMAINS } from "@/lib/taxonomy";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-const staticCapture = process.env.NEXT_PUBLIC_STATIC_CAPTURE === "1";
 
 const container: Variants = {
   hidden: {},
@@ -36,12 +36,13 @@ const cellBorders = [
 ];
 
 export function Stats() {
+  const skipEntrance = useSkipEntrance();
   return (
     <motion.div
       variants={container}
-      initial={staticCapture ? "show" : "hidden"}
-      whileInView={staticCapture ? undefined : "show"}
-      animate={staticCapture ? "show" : undefined}
+      initial={skipEntrance ? "show" : "hidden"}
+      whileInView={skipEntrance ? undefined : "show"}
+      animate={skipEntrance ? "show" : undefined}
       viewport={{ once: true, margin: "-15% 0px" }}
       className="mx-auto grid max-w-[1080px] grid-cols-2 border-b border-border px-6 md:grid-cols-4"
     >

@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Socials } from "@/components/layout/socials";
 import { navLinks } from "@/lib/site";
+import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -26,16 +27,22 @@ const fadeUp: Variants = {
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const skipEntrance = useSkipEntrance();
 
   return (
     <motion.header
-      initial={{ opacity: 0, y: 20 }}
+      initial={skipEntrance ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/85 backdrop-blur-md"
     >
       <nav className="mx-auto flex h-14 max-w-[1080px] items-center justify-between px-6">
-        <motion.div variants={fadeUp} initial="hidden" animate="show" custom={0}>
+        <motion.div
+          variants={fadeUp}
+          initial={skipEntrance ? "show" : "hidden"}
+          animate="show"
+          custom={0}
+        >
           <Link
             href="/"
             className="font-mono text-[13px] text-foreground"
@@ -50,7 +57,7 @@ export function Navbar() {
             <motion.li
               key={link.href}
               variants={fadeUp}
-              initial="hidden"
+              initial={skipEntrance ? "show" : "hidden"}
               animate="show"
               custom={i + 1}
             >
@@ -66,7 +73,7 @@ export function Navbar() {
 
         <motion.div
           variants={fadeUp}
-          initial="hidden"
+          initial={skipEntrance ? "show" : "hidden"}
           animate="show"
           custom={navLinks.length + 1}
           className="hidden items-center md:flex"
