@@ -22,12 +22,17 @@ here, and don't add a second thing that demands attention.
 | `src/components/motion/count-up.tsx` | `CountUp` | The four numbers in the stats band (`sections/stats.tsx`). Rolls 0 → value on first reveal; server HTML always carries the real number. |
 | `src/app/template.tsx` | default `Template` | Wraps every route. 0.3s fade-and-rise on the template remount Next.js performs per navigation — no state, no exit animation, nothing to fight that remount. |
 
-Two micro-interactions are CSS-only and live outside the kit: the **trace
-sweep** on ledger rows (`components/projects/project-ledger-row.tsx` + the
-`trace-sweep` keyframes in `globals.css` — a signal blip crosses a row's top
-border once per hover, like a span lighting up in a trace view) and the
-**radar ping** on the hero status dot (`radar-ping` keyframes; one soft ring
-every 3.2s). Both are disabled by `motion-reduce:`.
+Three micro-interactions live outside the kit as CSS keyframes in
+`globals.css`: the **trace sweep** on ledger rows
+(`components/projects/project-ledger-row.tsx` — a signal blip crosses a row's
+top border once per hover, like a span lighting up in a trace view), the
+**radar ping** on the hero status dot (one soft ring every 3.2s), and the
+**stats signal circuit** (`sections/stats.tsx` + the `stats-circuit-*`
+keyframes — every 8s one blip enters on the band's top line, runs to the
+center divider, drops down it, and exits along the bottom line; md+ only, and
+the strips are mounted only while the band is in view). The first two are
+disabled by `motion-reduce:`; the circuit is gated through `useSkipEntrance`
+like the kit components.
 
 ## The cursor layer
 
@@ -83,7 +88,8 @@ technical.
   consciously notices it, it's too strong.
 - **Micro-interactions stay micro.** The trace sweep runs once per hover on a
   1px line; the count-up runs once per visit; the radar ping is one ring every
-  3.2s on a 0.55em dot. None of them loop visibly enough to pull the eye.
+  3.2s on a 0.55em dot; the stats circuit is one ~3.6s pass on 1px lines
+  followed by 4.4s of rest. None of them loop visibly enough to pull the eye.
 - **One `TextReveal`, one `MagneticButton`.** The hero headline and the hero CTA.
   Applying either twice turns a first impression into a mannerism.
 - Everything else — `Reveal`, the stagger groups, the route transition — is
