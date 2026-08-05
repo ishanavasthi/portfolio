@@ -61,9 +61,10 @@
   --text-dim: #a3a3a3;
   --muted: #737b89;
   --accent: #6ee7b7;
-  /* Traveling-signal color for the AgentFlow pipeline diagram. Aliased to the
-     accent so the site stays single-hue; change here if the signal ever needs
-     to diverge from UI accent states. */
+  /* Signal color for interactive motion — the dot-lattice glow, the ledger
+     trace sweep, the status-dot radar ping. Aliased to the accent so the site
+     stays single-hue; change here if signal effects ever need to diverge from
+     UI accent states. */
   --agent-signal: var(--accent);
 
   --background: var(--bg);
@@ -80,8 +81,8 @@
   --accent-foreground: var(--bg);
   --destructive: oklch(0.704 0.191 22.216);
   --border: #1f1f1f;
-  /* One step up from --border for strokes that would vanish against --bg at
-     hairline widths (e.g. the AgentFlow pipeline path). */
+  /* One step up from --border for marks that would vanish against --bg at
+     hairline sizes (e.g. the resting dots of the hero lattice). */
   --border-strong: #2a2a2a;
   --input: var(--border);
   --ring: var(--accent);
@@ -109,6 +110,37 @@
   50.01%,
   100% {
     opacity: 0;
+  }
+}
+
+/* A thin signal blip sweeping along a ledger row's top border on hover — a
+   span lighting up in a trace view. The animated element is row-width with
+   the glow only in the tail of its gradient, so a plain -100% → 100%
+   translate carries the blip across the whole row on transforms alone. */
+@keyframes trace-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* The hero status dot's radar ping: one soft ring expands and dies, then the
+   animation idles for the rest of the cycle so it reads as a heartbeat, not a
+   strobe. */
+@keyframes radar-ping {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.6);
+  }
+  35% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
   }
 }
 

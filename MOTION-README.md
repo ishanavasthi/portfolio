@@ -16,81 +16,74 @@ here, and don't add a second thing that demands attention.
 | `src/components/motion/stagger.tsx` | `StaggerGroup`, `StaggerItem` | `StaggerGroup` drives the project cascade on `/projects` (`components/projects/project-cascade.tsx`) in `mode="mount"`, so the cascade replays when the filter remounts it with a new key, and the homepage featured ledger (`sections/projects.tsx`) in the default `mode="inView"`, where each `ProjectLedgerRow` sits in a `StaggerItem`. Cascade cards supply their own `cardVariants` instead of `StaggerItem` because they carry an extra `exit` state. |
 | `src/components/motion/text-reveal.tsx` | `TextReveal` | The hero `h1` **only** (`sections/hero.tsx`). Word-by-word rise behind per-word clip masks. Inherits `hidden`/`show` from the hero's stagger container by default; `standalone` drives its own entrance. |
 | `src/components/motion/magnetic-button.tsx` | `MagneticButton` | The hero "View projects" CTA **only** (`sections/hero.tsx`). Wraps rather than clones, so the anchor keeps its href, hover styles and focus ring. |
-| `src/components/motion/tilt-card.tsx` | `TiltCard` | `/projects` cards (`components/projects/project-card.tsx`) — **the signature moment**. 3D tilt on a spring plus a raw-pointer mint spotlight. Used nowhere else, by design. |
-| `src/components/motion/agent-flow.tsx` | `AgentFlow` | Homepage strip between `Hero` and `Stats` (`app/page.tsx`). AlphaDesk's five-stage pipeline with two signal dots riding the path. |
+| `src/components/motion/tilt-card.tsx` | `TiltCard` | `/projects` cards (`components/projects/project-card.tsx`) — **the `/projects` signature moment**. 3D tilt on a spring plus a raw-pointer mint spotlight. Used nowhere else, by design. |
+| `src/components/motion/dot-lattice.tsx` | `DotLattice` | Behind the hero **only** (`sections/hero.tsx`) — **the homepage signature moment**. A canvas grid of faint dots that lean toward the cursor and warm to the signal color around it. |
+| `src/components/motion/cursor-spotlight.tsx` | `CursorSpotlight` | Mounted once in `app/layout.tsx`. A whisper-alpha radial glow trailing the cursor on every page except `/projects`, where TiltCard is the only allowed light source. |
+| `src/components/motion/count-up.tsx` | `CountUp` | The four numbers in the stats band (`sections/stats.tsx`). Rolls 0 → value on first reveal; server HTML always carries the real number. |
 | `src/app/template.tsx` | default `Template` | Wraps every route. 0.3s fade-and-rise on the template remount Next.js performs per navigation — no state, no exit animation, nothing to fight that remount. |
 
-## AgentFlow
+Two micro-interactions are CSS-only and live outside the kit: the **trace
+sweep** on ledger rows (`components/projects/project-ledger-row.tsx` + the
+`trace-sweep` keyframes in `globals.css` — a signal blip crosses a row's top
+border once per hover, like a span lighting up in a trace view) and the
+**radar ping** on the hero status dot (`radar-ping` keyframes; one soft ring
+every 3.2s). Both are disabled by `motion-reduce:`.
 
-**Location:** `src/components/motion/agent-flow.tsx`
-**Placement:** Option A — a dedicated full-width strip on the homepage, directly
-between `Hero` and `Stats`.
+## The cursor layer
 
-### Why there
+The site's "alive" feel comes from one cursor-aware layer per surface, not from
+more entrance animation. (An earlier `AgentFlow` pipeline diagram lived between
+Hero and Stats; it was removed in favor of this layer — see git history if it's
+ever wanted back.)
 
-The hero lede literally says the words *agent pipelines*. Putting the diagram
-immediately beneath it makes it proof rather than decoration: the claim and its
-illustration are both near the fold, and the five node labels (Scanner,
-Research, Analyst, RiskManager, Execution) are AlphaDesk's real stages, not
-invented ones.
+### DotLattice — the homepage signature
 
-It also composes with the page rhythm. Every homepage section is a
-`border-b border-border` band, so hero → strip → stats reads as one continuous
-sequence instead of an inserted widget.
+**Location:** `src/components/motion/dot-lattice.tsx`, mounted behind the hero.
 
-Anywhere lower would have been worse. Sitting next to the projects ledger, a
-looping diagram would compete with the ledger rows for attention and, on
-`/projects`, with `TiltCard` — the one thing on the site allowed to be loud.
+- **Canvas, not DOM.** ~900 dots on springs would drown React; here each frame
+  is one clear and one pass of arcs, with the device-pixel-ratio capped at 2.
+- **Interaction model.** Dots within 130px of the cursor lean up to 5px toward
+  it and warm from `--border-strong` to `--agent-signal`; everything eases back
+  by exponential smoothing, which settles like a critically damped spring. At
+  rest the field is nearly invisible — the surface only feels live under the
+  reader's own hand.
+- **When it doesn't run.** The rAF loop is gated by an `IntersectionObserver`,
+  the page-visibility API, and an idle-stop: once the pointer leaves and every
+  dot settles, the loop cancels itself until the next pointermove. Touch devices
+  and reduced motion get a single static draw of the resting grid — the final
+  state, since with no cursor there is nothing to react to.
+- **Edges.** A CSS radial mask fades the lattice out before it touches the
+  section borders, so it reads as atmosphere rather than a panel of dots.
 
-### How it's built
+### CursorSpotlight — the connective tissue
 
-- **CSS `offset-path` + Framer `offsetDistance`.** Both dots are HTML divs
-  pinned to the same cubic path string via `offsetPath: path(...)`, animated on
-  `offsetDistance` from `0%` to `100%`. That keeps the whole loop on
-  GPU-friendly transform compositing rather than per-frame layout.
-- **Measured width, raw pixels, no viewBox.** `offset-path` resolves `path()`
-  against the element's own coordinate space and ignores SVG viewBox scaling, so
-  a `ResizeObserver` measures the container and the path is rebuilt in real
-  pixels. The SVG `d` attribute and the dots' `offsetPath` consume the *same*
-  string, which is the only way HTML dots and SVG stroke stay glued together at
-  every breakpoint. The container height is fixed at 120px up front so measuring
-  never causes layout shift.
-- **The weave.** Each segment bows the opposite direction from its neighbour, so
-  tangents stay continuous at every node and the chain reads as a soft weave
-  rather than a row of disconnected arcs. Amplitude is 12px — small on purpose.
-- **Second dot phasing.** The trailing dot uses a `times` array with a
-  zero-duration jump at the halfway mark so it snaps end→start mid-cycle and
-  both dots always travel forwards.
-- **SMIL fallback, documented not used.** SVG `<animateMotion>` would attach dots
-  to the path without any measuring at all, and it is the correct fallback if
-  `offset-path` support ever becomes a problem. It was not chosen because SMIL
-  animations are awkward to pause on scroll and can't be driven from the same
-  Framer timeline as the rest of the kit.
-- **Off-screen pause.** `useInView(containerRef, { amount: 0.3 })` gates the
-  dots; scrolled out of view they unmount entirely rather than burning frames.
-- **Reduced motion.** With `useSkipEntrance()` true the dots are never mounted
-  and the path, nodes and labels render as-is. The still diagram *is* the final
-  state — not a shortened animation.
-- **Accessibility.** The diagram is `aria-hidden`; only the
-  `AlphaDesk / agent pipeline` eyebrow is announced. The stage names already
-  exist as prose in the AlphaDesk entry in `src/lib/projects.ts`, so nothing is
-  lost.
+**Location:** `src/components/motion/cursor-spotlight.tsx`, mounted in the root
+layout.
+
+A 600px radial glow at 4.5% alpha trailing the cursor on a soft spring
+(deliberately looser than `springSettle` — light should trail attention, not
+track it). It returns `null` on `/projects` so TiltCard stays that page's only
+light source, renders nothing until the first fine-pointer move (which also
+keeps it off touch devices), and never activates under reduced motion.
 
 ### Color
 
 `--agent-signal` in `globals.css` is defined as `var(--accent)` — the existing
 mint `#6ee7b7`. It is an alias, not a new color: the site stays single-hue, and
-the token exists only so the signal can diverge later if there's ever a reason.
-Deliberately not a stock neon green picked to look technical.
+the token is the one knob for every signal-colored effect (lattice glow, trace
+sweep, radar ping). Deliberately not a stock neon green picked to look
+technical.
 
 ## Restraint
 
-- **`TiltCard` is the single signature moment.** It is the one animation on the
-  site that asks to be noticed, and it lives only on the `/projects` cards.
-- **`AgentFlow` is deliberately secondary.** The path is `#2a2a2a`, the node
-  rects are surface-on-border, the labels are muted-foreground. The accent
-  appears in exactly one place: the two 7px dots, with a static (never pulsing)
-  glow. Nothing about it competes with the projects grid.
+- **One signature per page.** `DotLattice` is the homepage's moment;
+  `TiltCard` is `/projects`'. Neither page hosts both, and nothing else on
+  either page is allowed to compete.
+- **`CursorSpotlight` is atmosphere, not an effect.** 4.5% alpha; if a visitor
+  consciously notices it, it's too strong.
+- **Micro-interactions stay micro.** The trace sweep runs once per hover on a
+  1px line; the count-up runs once per visit; the radar ping is one ring every
+  3.2s on a 0.55em dot. None of them loop visibly enough to pull the eye.
 - **One `TextReveal`, one `MagneticButton`.** The hero headline and the hero CTA.
   Applying either twice turns a first impression into a mannerism.
 - Everything else — `Reveal`, the stagger groups, the route transition — is

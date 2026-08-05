@@ -10,13 +10,19 @@ import {
   VIEWPORT_ONCE,
 } from "@/lib/motion/variants";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
+import { CountUp } from "@/components/motion/count-up";
 
 const stats = [
-  { value: `${projects.length}`, label: "projects shipped" },
-  { value: `${DOMAINS.length}`, label: "domains" },
-  { value: `${projectsByDomain("agents").length}`, label: "agent systems" },
+  { value: projects.length, suffix: "", label: "projects shipped" },
+  { value: DOMAINS.length, suffix: "", label: "domains" },
   {
-    value: `${Math.min(...projects.map((p) => p.year))}—`,
+    value: projectsByDomain("agents").length,
+    suffix: "",
+    label: "agent systems",
+  },
+  {
+    value: Math.min(...projects.map((p) => p.year)),
+    suffix: "—",
     label: "shipping since",
   },
 ] as const;
@@ -46,7 +52,8 @@ export function Stats() {
           className={cn("border-border px-6 py-7", cellBorders[i])}
         >
           <b className="block font-mono text-[28px] font-medium tracking-[-0.02em] text-foreground">
-            {stat.value}
+            <CountUp value={stat.value} />
+            {stat.suffix}
           </b>
           <span className="font-mono text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
             {stat.label}

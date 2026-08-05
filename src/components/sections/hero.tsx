@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { site, socials } from "@/lib/site";
 import { staggerContainer, fadeUpItem } from "@/lib/motion/variants";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
+import { DotLattice } from "@/components/motion/dot-lattice";
 import { TextReveal } from "@/components/motion/text-reveal";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 
@@ -14,7 +15,8 @@ const btnBase =
 export function Hero() {
   const skipEntrance = useSkipEntrance();
   return (
-    <section className="border-b border-border pt-[120px] pb-24">
+    <section className="relative isolate border-b border-border pt-[120px] pb-24">
+      <DotLattice />
       <motion.div
         variants={staggerContainer}
         initial={skipEntrance ? "show" : "hidden"}
@@ -26,7 +28,13 @@ export function Hero() {
           className="mb-8 flex flex-wrap gap-6 font-mono text-xs text-muted-foreground"
         >
           <span>{site.location}</span>
-          <span className="text-accent">●</span>
+          <span className="relative inline-flex items-center justify-center text-accent">
+            <span
+              aria-hidden
+              className="absolute size-[0.55em] rounded-full border border-accent animate-[radar-ping_3.2s_ease-out_infinite] motion-reduce:hidden"
+            />
+            ●
+          </span>
           <span>{site.status}</span>
         </motion.div>
 
