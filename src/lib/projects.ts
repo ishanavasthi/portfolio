@@ -1,4 +1,5 @@
 import type { DomainId, Tag } from "@/lib/taxonomy";
+import { PROJECT_ACTIVITY, type ProjectActivity } from "@/lib/project-activity";
 
 export type Project = {
   /** Stable key + deep-link target. Matches the GitHub repo name. */
@@ -311,6 +312,29 @@ export const projects: readonly Project[] = [
 
   // ─── Full-Stack & Web ──────────────────────────────────────────────────
   {
+    slug: "verdict-desk",
+    name: "Verdict Desk",
+    headline:
+      "Grades student code in a hardened Docker sandbox, and no AI answer reaches a student until a teacher approves it.",
+    description:
+      "An AI code-grading and doubt-resolution portal built around what happens when the inputs are hostile. Student submissions run in a network-isolated, resource-capped throwaway container per submission — the API deliberately stays on the host rather than mounting the Docker socket into a container. AI drafts answers to student doubts, but the draft → pending → approved state machine is enforced by Postgres triggers, not application code, so an illegal transition fails at the database even if every layer above it is compromised. Ships with an abuse suite that proves containment: fork bombs, infinite loops, network calls, and 100MB of stdout all get contained without moving API memory.",
+    domain: "web",
+    tags: ["TypeScript", "Next.js", "Docker", "Full-Stack", "Systems", "Evals"],
+    tech: [
+      "Next.js 15",
+      "NestJS 11",
+      "TypeScript",
+      "PostgreSQL",
+      "Prisma",
+      "Docker",
+      "pnpm workspaces",
+    ],
+    year: 2026,
+    featured: true,
+    weight: 2,
+    github: gh("verdict-desk"),
+  },
+  {
     slug: "fintracker",
     name: "FinTracker",
     headline: "Personal finance tracker with category budgets and live spend breakdowns.",
@@ -516,4 +540,65 @@ export const featuredProjects = projects.filter((p) => p.featured);
 
 export function projectsByDomain(domain: DomainId) {
   return projects.filter((p) => p.domain === domain);
+}
+
+// ─── Activity ────────────────────────────────────────────────────────────────
+//
+// `year` is a curated field and nearly everything here says 2026, which makes
+// it useless for the one question a visitor actually has: what is he working on
+// *now*. Commit dates answer that. They come from GitHub via
+// `npm run sync:github`, generated into project-activity.ts and committed, so
+// nothing here touches the network at build or request time.
+
+/** Commit span for a project, or undefined if the repo is private/unreachable. */
+export function activityOf(slug: string): ProjectActivity | undefined {
+  return PROJECT_ACTIVITY[slug];
+}
+
+/**
+ * Most-recently-committed first. Undated projects sink below every dated one
+ * rather than jumping to the top on an empty sort key, and fall back to the
+ * curated year among themselves.
+ */
+export const projectsByRecency: readonly Project[] = [...projects].sort((a, b) => {
+  const x = activityOf(a.slug)?.updated;
+  const y = activityOf(b.slug)?.updated;
+  if (x && y) return y.localeCompare(x);
+  if (x) return -1;
+  if (y) return 1;
+  return b.year - a.year || a.name.localeCompare(b.name);
+});
+
+/** Days since the last commit, or null when the project has no activity data. */
+export function daysSinceUpdate(slug: string, now = Date.now()): number | null {
+  const updated = activityOf(slug)?.updated;
+  if (!updated) return null;
+  return (now - new Date(updated).getTime()) / 86_400_000;
+}
+
+/**
+ * Committed within the fortnight. Two weeks is long enough to survive a busy
+ * week away from a repo and short enough that "active" still means something.
+ */
+export const ACTIVE_WINDOW_DAYS = 14;
+
+export function isActive(slug: string, now = Date.now()): boolean {
+  const days = daysSinceUpdate(slug, now);
+  return days !== null && days < ACTIVE_WINDOW_DAYS;
+}
+
+/**
+ * Compact age label — "today", "3d ago", "5mo ago". Deliberately coarse: this
+ * sits in a narrow column next to a project name, and nobody needs the hour.
+ */
+export function lastTouchedLabel(slug: string, now = Date.now()): string | null {
+  const days = daysSinceUpdate(slug, now);
+  if (days === null) return null;
+  if (days < 1) return "today";
+  if (days < 2) return "yesterday";
+  if (days < 7) return `${Math.floor(days)}d ago`;
+  if (days < 30) return `${Math.floor(days / 7)}w ago`;
+  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
+  const years = Math.floor(days / 365);
+  return `${years}y ago`;
 }

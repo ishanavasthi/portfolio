@@ -61,7 +61,7 @@ export function Hero() {
           className="mt-7 max-w-[620px] text-[19px] leading-[1.6] text-[var(--text-dim)]"
         >
           I build the layer between raw language models and working
-          products — <strong className="font-medium text-foreground">agent pipelines</strong>,{" "}
+          products - <strong className="font-medium text-foreground">agent pipelines</strong>,{" "}
           <strong className="font-medium text-foreground">RAG systems</strong>, and the{" "}
           <strong className="font-medium text-foreground">
             observability and evals

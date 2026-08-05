@@ -22,7 +22,13 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { projects } from "@/lib/projects";
+import {
+  activityOf,
+  isActive,
+  lastTouchedLabel,
+  projects,
+  projectsByRecency,
+} from "@/lib/projects";
 import {
   DOMAINS,
   TAG_GROUPS,
@@ -264,10 +270,20 @@ export function ProjectFilters({
 function SearchBody({ onSelect }: { onSelect: (slug: string) => void }) {
   const [query, setQuery] = React.useState("");
 
+  /*
+    Pinned for the lifetime of the dialog. Every age label below is computed
+    against this one instant, so a long-open palette can't drift into a state
+    where one row says "6d ago" and the row beside it re-rendered into "7d ago".
+    Safe to read the clock during render: the dialog portal doesn't mount until
+    the palette opens, so this never runs on the server.
+  */
+  const [now] = React.useState(() => Date.now());
+
   const results = React.useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return projects.slice(0, 8);
-    return projects
+    // Empty query is the "what is he working on" view — newest commit first.
+    if (!q) return projectsByRecency.slice(0, 8);
+    return projectsByRecency
       .map((p) => {
         const name = p.name.toLowerCase();
         // Name matches beat headline matches, which beat tag matches.
@@ -280,7 +296,9 @@ function SearchBody({ onSelect }: { onSelect: (slug: string) => void }) {
         return { project: p, score };
       })
       .filter((r) => r.score > 0)
-      .sort((a, b) => b.score - a.score || a.project.name.localeCompare(b.project.name))
+      // Ties break on recency, not the alphabet: searching "agent" should put
+      // this month's agent work above a 2024 one that happens to start with A.
+      .sort((a, b) => b.score - a.score)
       .map((r) => r.project);
   }, [query]);
 
@@ -293,25 +311,43 @@ function SearchBody({ onSelect }: { onSelect: (slug: string) => void }) {
       />
       <CommandList>
         <CommandEmpty>No projects match that.</CommandEmpty>
-        <CommandGroup heading={query ? "Results" : "Recent work"}>
-          {results.map((p) => (
-            <CommandItem
-              key={p.slug}
-              value={p.slug}
-              onSelect={() => onSelect(p.slug)}
-              className="flex-col items-start gap-0.5"
-            >
-              <span className="flex w-full items-center gap-2">
-                <span className="truncate font-medium">{p.name}</span>
-                <span className="text-muted-foreground ml-auto font-mono text-[10px]">
-                  {p.year}
+        <CommandGroup heading={query ? "Results" : "Latest commits"}>
+          {results.map((p) => {
+            const activity = activityOf(p.slug);
+            const age = lastTouchedLabel(p.slug, now);
+            const active = isActive(p.slug, now);
+            return (
+              <CommandItem
+                key={p.slug}
+                value={p.slug}
+                onSelect={() => onSelect(p.slug)}
+                className="flex-col items-start gap-0.5"
+              >
+                <span className="flex w-full items-center gap-2">
+                  <span className="truncate font-medium">{p.name}</span>
+                  {active ? (
+                    <span
+                      className="size-1.5 shrink-0 rounded-full bg-accent"
+                      title={`Committed in the last two weeks${
+                        activity ? ` — ${activity.commits} commits` : ""
+                      }`}
+                      aria-hidden
+                    />
+                  ) : null}
+                  <span
+                    className={`ml-auto shrink-0 font-mono text-[10px] tabular-nums ${
+                      active ? "text-accent" : "text-muted-foreground"
+                    }`}
+                  >
+                    {age ?? p.year}
+                  </span>
                 </span>
-              </span>
-              <span className="text-muted-foreground truncate text-xs">
-                {p.headline}
-              </span>
-            </CommandItem>
-          ))}
+                <span className="text-muted-foreground truncate text-xs">
+                  {p.headline}
+                </span>
+              </CommandItem>
+            );
+          })}
         </CommandGroup>
       </CommandList>
     </>

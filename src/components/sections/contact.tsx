@@ -35,7 +35,7 @@ export function Contact() {
           >
             Building something with agents?
             <br />
-            Let&apos;s talk —{" "}
+            Let&apos;s talk -{" "}
             <a
               href={socials.email}
               className="border-b-2 border-[rgba(110,231,183,0.3)] text-accent transition-colors duration-[180ms] ease-out hover:border-accent"
