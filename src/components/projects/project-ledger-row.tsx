@@ -20,10 +20,18 @@ export function ProjectLedgerRow({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "group grid grid-cols-[40px_1fr] items-baseline gap-5 border-t border-border py-7 transition-colors duration-[180ms] ease-out hover:bg-white/[0.015] md:grid-cols-[56px_1fr_auto]",
+        "group relative grid grid-cols-[40px_1fr] items-baseline gap-5 overflow-hidden border-t border-border py-7 transition-colors duration-[180ms] ease-out hover:bg-white/[0.015] md:grid-cols-[56px_1fr_auto]",
         isLast && "border-b",
       )}
     >
+      {/* Trace sweep: a signal blip crossing the row's top border on hover.
+          The gradient lives only in the tail of a row-width strip, so the
+          -100% → 100% keyframe translate carries it edge to edge; when the
+          animation ends the resting -translate-x-full hides it again. */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px -translate-x-full bg-[linear-gradient(90deg,transparent_0%,transparent_62%,var(--agent-signal)_86%,transparent_100%)] opacity-70 group-hover:animate-[trace-sweep_0.8s_linear_1] motion-reduce:group-hover:animate-none"
+      />
       <span className="self-start pt-1 font-mono text-xs text-muted-foreground">
         {String(index).padStart(3, "0")}
       </span>

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { BackLink } from "@/components/layout/back-link";
 import { SectionHead } from "@/components/layout/section-head";
+import { Reveal } from "@/components/motion/reveal";
 import { ProjectExplorer } from "@/components/projects/project-explorer";
 import { projects } from "@/lib/projects";
 
@@ -16,7 +17,9 @@ export default function ProjectsPage() {
       <BackLink />
 
       <header className="mt-10 flex flex-col gap-6 border-b border-border pb-16">
-        <SectionHead index="00" title="Archive" />
+        <Reveal direction="up">
+          <SectionHead index="00" title="Archive" />
+        </Reveal>
         <h1 className="text-foreground text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
           Projects
         </h1>

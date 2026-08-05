@@ -1,20 +1,14 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { SectionHead } from "@/components/layout/section-head";
+import {
+  fadeUpItem,
+  staggerContainer,
+  VIEWPORT_ONCE,
+} from "@/lib/motion/variants";
+import { Reveal } from "@/components/motion/reveal";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
-
-const ease = [0.22, 1, 0.36, 1] as const;
-
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
-};
-
-const item: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
-};
 
 export function About() {
   const skipEntrance = useSkipEntrance();
@@ -24,17 +18,19 @@ export function About() {
       className="border-b border-border py-[88px]"
     >
       <div className="mx-auto max-w-[1080px] px-6">
-        <SectionHead index="01" title="About" />
+        <Reveal direction="up">
+          <SectionHead index="01" title="About" />
+        </Reveal>
 
         <motion.div
-          variants={container}
+          variants={staggerContainer}
           initial={skipEntrance ? "show" : "hidden"}
           whileInView={skipEntrance ? undefined : "show"}
           animate={skipEntrance ? "show" : undefined}
-          viewport={{ once: true, margin: "-15% 0px" }}
+          viewport={VIEWPORT_ONCE}
         >
           <motion.p
-            variants={item}
+            variants={fadeUpItem}
             className="max-w-[680px] text-[19px] leading-[1.7] text-[var(--text-dim)]"
           >
             I&apos;m a CS undergrad at BITS Pilani working on AI engineering.

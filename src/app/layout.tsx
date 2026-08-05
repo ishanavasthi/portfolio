@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { CursorSpotlight } from "@/components/motion/cursor-spotlight";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
         <Navbar />
         <main className="pt-14">{children}</main>
         <Footer />
+        <CursorSpotlight />
         <SpeedInsights />
         <Analytics />
       </body>

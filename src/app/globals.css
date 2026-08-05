@@ -61,6 +61,11 @@
   --text-dim: #a3a3a3;
   --muted: #737b89;
   --accent: #6ee7b7;
+  /* Signal color for interactive motion — the dot-lattice glow, the ledger
+     trace sweep, the status-dot radar ping. Aliased to the accent so the site
+     stays single-hue; change here if signal effects ever need to diverge from
+     UI accent states. */
+  --agent-signal: var(--accent);
 
   --background: var(--bg);
   --foreground: var(--text);
@@ -76,6 +81,9 @@
   --accent-foreground: var(--bg);
   --destructive: oklch(0.704 0.191 22.216);
   --border: #1f1f1f;
+  /* One step up from --border for marks that would vanish against --bg at
+     hairline sizes (e.g. the resting dots of the hero lattice). */
+  --border-strong: #2a2a2a;
   --input: var(--border);
   --ring: var(--accent);
   --chart-1: oklch(0.87 0 0);
@@ -102,6 +110,110 @@
   50.01%,
   100% {
     opacity: 0;
+  }
+}
+
+/* A thin signal blip sweeping along a ledger row's top border on hover — a
+   span lighting up in a trace view. The animated element is row-width with
+   the glow only in the tail of its gradient, so a plain -100% → 100%
+   translate carries the blip across the whole row on transforms alone. */
+@keyframes trace-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* The stats-band signal circuit: one blip enters on the band's top line,
+   runs to the center divider, drops down it, and continues along the bottom
+   line to the right edge — then the band rests for the remainder of the 8s
+   cycle. Three strips share one timeline; the gradient peak sits at 90% of
+   each strip, so the translate endpoints are chosen to park the peak exactly
+   on the divider (container 50%) at the handoff. */
+@keyframes stats-circuit-top {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.6;
+  }
+  17.5% {
+    transform: translateX(-40%);
+    opacity: 0.6;
+  }
+  19% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+}
+
+@keyframes stats-circuit-down {
+  0%,
+  17% {
+    transform: translateY(-90%);
+    opacity: 0;
+  }
+  17.5% {
+    transform: translateY(-90%);
+    opacity: 0.6;
+  }
+  27.5% {
+    transform: translateY(10%);
+    opacity: 0.6;
+  }
+  29% {
+    transform: translateY(10%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(10%);
+    opacity: 0;
+  }
+}
+
+@keyframes stats-circuit-bottom {
+  0%,
+  27% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+  27.5% {
+    transform: translateX(-40%);
+    opacity: 0.6;
+  }
+  45% {
+    transform: translateX(10%);
+    opacity: 0.6;
+  }
+  46.5% {
+    transform: translateX(10%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(10%);
+    opacity: 0;
+  }
+}
+
+/* The hero status dot's radar ping: one soft ring expands and dies, then the
+   animation idles for the rest of the cycle so it reads as a heartbeat, not a
+   strobe. */
+@keyframes radar-ping {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.6);
+  }
+  35% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
   }
 }
 

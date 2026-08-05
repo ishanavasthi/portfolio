@@ -1,27 +1,13 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { site, socials } from "@/lib/site";
+import { staggerContainer, fadeUpItem } from "@/lib/motion/variants";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
-
-const ease = [0.22, 1, 0.36, 1] as const;
-
-const container: Variants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.08, delayChildren: 0.05 },
-  },
-};
-
-const item: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease },
-  },
-};
+import { DotLattice } from "@/components/motion/dot-lattice";
+import { TextReveal } from "@/components/motion/text-reveal";
+import { MagneticButton } from "@/components/motion/magnetic-button";
 
 const btnBase =
   "inline-flex items-center gap-2 rounded-[6px] border border-border px-5 py-[11px] font-mono text-[13px] text-foreground transition-colors duration-[0.18s] ease-out hover:border-accent hover:text-accent";
@@ -29,31 +15,37 @@ const btnBase =
 export function Hero() {
   const skipEntrance = useSkipEntrance();
   return (
-    <section className="border-b border-border pt-[120px] pb-24">
+    <section className="relative isolate border-b border-border pt-[120px] pb-24">
+      <DotLattice />
       <motion.div
-        variants={container}
+        variants={staggerContainer}
         initial={skipEntrance ? "show" : "hidden"}
         animate="show"
         className="mx-auto max-w-[1080px] px-6"
       >
         <motion.div
-          variants={item}
+          variants={fadeUpItem}
           className="mb-8 flex flex-wrap gap-6 font-mono text-xs text-muted-foreground"
         >
           <span>{site.location}</span>
-          <span className="text-accent">●</span>
+          <span className="relative inline-flex items-center justify-center text-accent">
+            <span
+              aria-hidden
+              className="absolute size-[0.55em] rounded-full border border-accent animate-[radar-ping_3.2s_ease-out_infinite] motion-reduce:hidden"
+            />
+            ●
+          </span>
           <span>{site.status}</span>
         </motion.div>
 
-        <motion.h1
-          variants={item}
+        <TextReveal
+          as="h1"
+          text={site.name}
           className="text-[clamp(44px,7vw,76px)] font-semibold tracking-[-0.025em] text-foreground [line-height:1.05]"
-        >
-          {site.name}
-        </motion.h1>
+        />
 
         <motion.p
-          variants={item}
+          variants={fadeUpItem}
           className="mt-5 font-mono text-[15px] text-accent"
         >
           <span>{site.title}</span>
@@ -65,7 +57,7 @@ export function Hero() {
         </motion.p>
 
         <motion.p
-          variants={item}
+          variants={fadeUpItem}
           className="mt-7 max-w-[620px] text-[19px] leading-[1.6] text-[var(--text-dim)]"
         >
           I build the layer between raw language models and working
@@ -77,16 +69,18 @@ export function Hero() {
           that make them reliable enough to ship.
         </motion.p>
 
-        <motion.div variants={item} className="mt-10 flex flex-wrap gap-3">
-          <a
-            href="#projects"
-            className={cn(
-              btnBase,
-              "border-accent bg-accent font-medium text-[#0a0a0a] hover:bg-[#8ceec7] hover:text-[#0a0a0a]",
-            )}
-          >
-            View projects
-          </a>
+        <motion.div variants={fadeUpItem} className="mt-10 flex flex-wrap gap-3">
+          <MagneticButton>
+            <a
+              href="#projects"
+              className={cn(
+                btnBase,
+                "border-accent bg-accent font-medium text-[#0a0a0a] hover:bg-[#8ceec7] hover:text-[#0a0a0a]",
+              )}
+            >
+              View projects
+            </a>
+          </MagneticButton>
           <a
             href={socials.github}
             target="_blank"
