@@ -11,14 +11,25 @@ export function ProjectLedgerRow({
   index: number;
   isLast?: boolean;
 }) {
-  const href = project.github ?? project.live;
-  if (!href) return null;
+  // The row as a whole goes to the repo; the demo/live chip is its own target.
+  // Falling back to `live` keeps rows for projects with no public repo clickable.
+  const rowHref = project.github ?? project.live;
+  if (!rowHref) return null;
+  // Only worth its own link when it points somewhere the row doesn't already.
+  const demoHref = project.live !== rowHref ? project.live : undefined;
+  // Derived from `live`, not `demoHref`, so the label stays right in the
+  // no-repo case where the row itself is already the demo target.
+  const demoLabel = project.live?.includes("video") ? "demo" : "live";
 
   return (
-    <Link
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+    /*
+      Stretched-link pattern, not a row-wide <a>. An anchor cannot nest inside
+      another anchor — the parser hoists the inner one out — so the row is a
+      plain div and the primary link projects an ::after overlay across it.
+      That keeps both targets real anchors: middle-click, cmd-click, "copy link
+      address", and tab order all behave, which a click handler wouldn't give us.
+    */
+    <div
       className={cn(
         "group relative grid grid-cols-[40px_1fr] items-baseline gap-5 overflow-hidden border-t border-border py-7 transition-colors duration-[180ms] ease-out hover:bg-white/[0.015] md:grid-cols-[56px_1fr_auto]",
         isLast && "border-b",
@@ -38,7 +49,15 @@ export function ProjectLedgerRow({
 
       <div>
         <div className="text-xl font-semibold tracking-[-0.01em] text-foreground transition-colors duration-[180ms] ease-out group-hover:text-accent">
-          {project.name}
+          <Link
+            href={rowHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${project.name} — ${project.github ? "source on GitHub" : demoLabel}`}
+            className="rounded-[2px] outline-offset-4 after:absolute after:inset-0 after:content-[''] focus-visible:outline-2 focus-visible:outline-accent"
+          >
+            {project.name}
+          </Link>
         </div>
         <p className="mt-1.5 max-w-[560px] text-[15px] text-[var(--text-dim)]">
           {project.headline}
@@ -60,12 +79,26 @@ export function ProjectLedgerRow({
       <div className="col-start-2 flex flex-row items-center gap-3 font-mono text-xs text-muted-foreground md:col-start-auto md:flex-col md:items-end md:gap-2.5">
         <span>{project.year}</span>
         <div className="flex gap-3.5">
+          {/* Not a link: this labels the row's own target, which the stretched
+              overlay above already covers. */}
           {project.github && <span>code ↗</span>}
-          {project.live && (
-            <span>{project.live.includes("video") ? "demo" : "live"} ↗</span>
+          {demoHref ? (
+            // Lifted out of the overlay's stacking order so the click lands here
+            // instead of falling through to the repo.
+            <Link
+              href={demoHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${project.name} ${demoLabel}`}
+              className="relative z-10 rounded-[2px] outline-offset-4 transition-colors duration-[180ms] ease-out hover:text-accent focus-visible:outline-2 focus-visible:outline-accent"
+            >
+              {demoLabel} ↗
+            </Link>
+          ) : (
+            project.live && <span>{demoLabel} ↗</span>
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
