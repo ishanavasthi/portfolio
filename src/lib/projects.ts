@@ -77,12 +77,12 @@ export const projects: readonly Project[] = [
   {
     slug: "alphadesk",
     name: "AlphaDesk",
-    headline: "Multi-agent Indian equity research desk with human approval checkpoints.",
+    headline: "Multi-tenant portfolio analyzer for Indian investors, narrated by agents that can't invent a number.",
     description:
-      "Built a full-stack multi-agent research platform that automates Indian stock analysis with LangGraph, live NSE market data, RAG over financial filings, human approval checkpoints, and a real-time research dashboard.",
+      "Shipped v2 as a real product: sign in with Clerk, link an IND Money account over MCP, and get net worth, allocation, holdings, and a nightly net-worth trend, with an AI overview written by a fan-out of specialist agents. Every figure is computed in Python first, and any digit an agent writes freehand trips a scripted fallback, so the narrative can never fabricate one. Per-user broker tokens are Fernet-encrypted in Neon Postgres; the original multi-agent research desk lives on as a labelled paper-trading Lab.",
     domain: "agents",
-    tags: ["Python", "TypeScript", "LangGraph", "FastAPI", "Next.js", "Multi-Agent", "RAG", "Full-Stack"],
-    tech: ["LangGraph", "Next.js", "TypeScript", "FastAPI", "ChromaDB", "ONNX", "LangSmith"],
+    tags: ["Python", "TypeScript", "LangGraph", "FastAPI", "Next.js", "MCP", "Multi-Agent", "Full-Stack"],
+    tech: ["LangGraph", "FastAPI", "Next.js", "TypeScript", "Clerk", "Neon Postgres", "SQLModel + Alembic", "IND Money MCP", "OpenAI", "Groq"],
     year: 2026,
     featured: true,
     weight: 2,

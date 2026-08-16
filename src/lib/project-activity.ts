@@ -11,20 +11,21 @@ export type ProjectActivity = {
 };
 
 /** When this file was last regenerated. Rendered as the "as of" in the UI. */
-export const ACTIVITY_SYNCED_AT = "2026-08-05T11:50:40.814Z";
+export const ACTIVITY_SYNCED_AT = "2026-08-16T15:19:32.089Z";
 
 /** Keyed by project slug, which is also the GitHub repo name. */
 export const PROJECT_ACTIVITY: Readonly<Record<string, ProjectActivity>> = {
+  "alphadesk": { started: "2026-06-24T14:11:57Z", updated: "2026-08-16T14:02:09Z", commits: 211 },
+  "insurance-claim-env": { started: "2026-03-27T09:27:49Z", updated: "2026-08-14T17:41:56Z", commits: 4 },
+  "clinicflow": { started: "2026-07-18T00:13:40Z", updated: "2026-08-06T23:16:47Z", commits: 45 },
+  "portfolio": { started: "2026-04-29T21:10:18Z", updated: "2026-08-05T12:13:44Z", commits: 55 },
   "verdict-desk": { started: "2026-08-03T20:32:39Z", updated: "2026-08-05T11:35:35Z", commits: 72 },
-  "portfolio": { started: "2026-04-29T21:10:18Z", updated: "2026-08-05T00:25:43Z", commits: 52 },
   "personalized-message-router": { started: "2026-07-28T06:51:54Z", updated: "2026-08-03T21:55:30Z", commits: 82 },
   "reviewgrid": { started: "2026-07-28T07:47:42Z", updated: "2026-08-03T20:29:44Z", commits: 18 },
   "context-lens": { started: "2026-07-31T15:46:18Z", updated: "2026-07-31T21:12:59Z", commits: 65 },
   "swiggy-claw": { started: "2026-05-31T08:57:04Z", updated: "2026-07-30T01:34:13Z", commits: 21 },
   "preflight": { started: "2026-07-26T19:32:15Z", updated: "2026-07-27T21:49:53Z", commits: 33 },
-  "clinicflow": { started: "2026-07-18T00:13:40Z", updated: "2026-07-26T17:07:17Z", commits: 44 },
   "agentgrid": { started: "2026-07-11T05:04:17Z", updated: "2026-07-16T12:49:59Z", commits: 12 },
-  "alphadesk": { started: "2026-06-24T14:11:57Z", updated: "2026-07-14T18:57:05Z", commits: 19 },
   "gemini-api-tester": { started: "2026-07-11T06:36:57Z", updated: "2026-07-11T06:36:57Z", commits: 1 },
   "composio-research": { started: "2026-07-09T14:31:47Z", updated: "2026-07-09T17:52:25Z", commits: 5 },
   "markdown-copier": { started: "2026-06-20T20:45:42Z", updated: "2026-06-20T20:45:42Z", commits: 1 },
@@ -34,7 +35,6 @@ export const PROJECT_ACTIVITY: Readonly<Record<string, ProjectActivity>> = {
   "recruit-env": { started: "2026-04-03T16:17:39Z", updated: "2026-05-19T21:17:20Z", commits: 33 },
   "OverloadingMVP": { started: "2026-04-20T19:26:54Z", updated: "2026-04-29T17:47:53Z", commits: 3 },
   "fintracker": { started: "2026-04-20T14:17:54Z", updated: "2026-04-20T16:22:04Z", commits: 14 },
-  "insurance-claim-env": { started: "2026-03-27T09:27:49Z", updated: "2026-03-27T09:27:49Z", commits: 1 },
   "pr-review-bot": { started: "2026-03-19T18:46:45Z", updated: "2026-03-19T18:46:45Z", commits: 1 },
   "EventHive": { started: "2026-02-20T09:00:00Z", updated: "2026-02-23T09:53:35Z", commits: 6 },
   "kv-cache": { started: "2026-01-25T18:19:56Z", updated: "2026-01-25T18:19:56Z", commits: 1 },
