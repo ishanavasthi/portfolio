@@ -120,6 +120,20 @@ export const projects: readonly Project[] = [
     live: "https://reviewgrid-915b1bbc.base44.app",
   },
   {
+    slug: "panorama",
+    name: "Panorama",
+    headline: "Reviews a pull request using evidence from the other repos in the org.",
+    description:
+      "Built a CLI and watcher that reviews a GitHub PR against its sibling repositories — a rename that breaks a client, a helper that already exists next door, an endpoint that ignores an org convention — citing repo/path:line and never copying source across a trust boundary. Four independent retrieval channels (lexical, dependency graph, symbol index, HTTP contract) are rank-fused to orient the model, then every citation it returns is re-checked against the real files, so an unsupported finding is discarded rather than downgraded. V2 turned quality into a number gated on every commit: an 18-case labelled corpus over six repos and three languages, recall@3 of 1.000, and zero false positives on negative controls across 54 live runs.",
+    domain: "agents",
+    tags: ["Python", "Claude", "DevTools", "Evals"],
+    tech: ["Python", "Typer", "Pydantic", "uv", "Claude Code CLI", "GitHub CLI", "git"],
+    year: 2026,
+    weight: 2,
+    github: "https://github.com/ishanavasthi/panorama/tree/v2",
+    live: "https://link.ishanavasthi.in/panorama-video",
+  },
+  {
     slug: "pr-review-bot",
     name: "PR Review Bot",
     headline: "GitHub App that reviews every pull request with Gemini.",
