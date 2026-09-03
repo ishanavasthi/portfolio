@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/icons/brand";
@@ -109,6 +110,18 @@ export function ProjectCard({
           <p className="text-sm leading-relaxed text-foreground/90">
             {project.headline}
           </p>
+          {project.image ? (
+            <span className="block overflow-hidden rounded-[4px] border border-border">
+              <Image
+                src={project.image.src}
+                alt={project.image.alt}
+                width={800}
+                height={500}
+                loading="lazy"
+                className="aspect-[16/10] w-full object-cover object-top transition-transform duration-[300ms] ease-out group-hover:scale-[1.015]"
+              />
+            </span>
+          ) : null}
           {showDescription ? (
             <p className="text-sm leading-relaxed text-[var(--text-dim)]">
               {project.description}

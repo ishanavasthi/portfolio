@@ -41,6 +41,8 @@ const EXCLUDED = {
   "resume-builder": "empty repo",
   "lld-assignment2": "empty repo",
   ishanavasthi: "GitHub profile README",
+  "sleep-fix": "single-page circadian planner toy, below the web weight-1 bar",
+  "claw-case-study": "static write-up page for swiggy-claw, not a project on its own",
 };
 
 function gh(args) {

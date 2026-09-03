@@ -23,12 +23,39 @@ export type Project = {
   weight?: 1 | 2;
   github?: string;
   live?: string;
+  /**
+   * Optional hero screenshot, served from /public/projects. Rendered at the
+   * top of the cascade card with a 16/10 crop from the top edge.
+   */
+  image?: {
+    src: string;
+    alt: string;
+  };
 };
 
 const gh = (slug: string) => `https://github.com/ishanavasthi/${slug}`;
 
 export const projects: readonly Project[] = [
   // ─── Agents & LLM Systems ──────────────────────────────────────────────
+  {
+    slug: "agent-store",
+    name: "Agent Store",
+    headline: "Merchant-side agentic commerce: messy captions in, buyable MCP catalog out.",
+    description:
+      "Turns long-tail sellers' Instagram and Hinglish captions into an AI-buyer-readable catalog over MCP plus a REST twin, via server-side extraction with a 0.90 confidence gate that never invents stock. Purchases run a signed intent → cart → payment mandate chain with per-agent caps and per-purchase budgets on real Razorpay test rails; every decision lands in a hash-chained, append-only audit log replayable in the viewer and independently re-checked. 29 products and 92 variants from 28 hand-labelled captions, with fail-closed decline and auto-refund oversell rehearsals.",
+    domain: "agents",
+    tags: ["TypeScript", "MCP", "Claude", "Multi-Agent", "Evals", "Full-Stack"],
+    tech: ["TypeScript", "Express", "MCP SDK", "Drizzle", "Neon Postgres", "Razorpay", "React", "Vite", "Vitest", "Railway"],
+    year: 2026,
+    featured: true,
+    weight: 2,
+    github: gh("agent-store"),
+    live: "https://link.ishanavasthi.in/agent-store",
+    image: {
+      src: "/projects/agent-store-viewer-order-replay.png",
+      alt: "An order replayed event by event in the Agent Store audit viewer",
+    },
+  },
   {
     slug: "preflight",
     name: "Preflight",
@@ -88,6 +115,10 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: gh("alphadesk"),
     live: "https://link.ishanavasthi.in/alphadesk",
+    image: {
+      src: "/projects/alphadesk-demo.png",
+      alt: "AlphaDesk demo dashboard: net worth cards, AI overview, and allocation breakdown",
+    },
   },
   {
     slug: "swiggy-claw",
@@ -187,6 +218,19 @@ export const projects: readonly Project[] = [
   },
 
   // ─── RAG & Document AI ─────────────────────────────────────────────────
+  {
+    slug: "lenny-growth-assistant",
+    name: "Lenny Growth Assistant",
+    headline: "Grounded answers over 301 Lenny's Podcast episodes, cited to the exact YouTube second.",
+    description:
+      "Conversational assistant over 15,983 passages from Lenny's Podcast: hybrid retrieval with RRF reranking over pgvector answers product and growth questions with citations linking to exact YouTube timestamps. Ships a Ship 30 essay skill, versioned Markdown and HTML artifacts with a sandboxed viewer, and a 9/10 golden eval set. Runs on Anthropic, OpenAI, OpenRouter, or local Ollama with zero keys.",
+    domain: "rag",
+    tags: ["Python", "TypeScript", "Claude", "RAG", "Evals", "Full-Stack", "Data"],
+    tech: ["Python", "FastAPI", "Claude Agent SDK", "pgvector", "LiteLLM", "React", "Vite", "Docker"],
+    year: 2026,
+    weight: 2,
+    github: gh("lenny-growth-assistant"),
+  },
   {
     slug: "ChatWithPDF",
     name: "ChatWithPDF",
