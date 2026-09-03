@@ -327,46 +327,6 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: gh("kv-cache"),
   },
-  {
-    slug: "gemini-api-tester",
-    name: "Gemini API Tester",
-    headline: "Validate a Gemini key, list usable models, run a live smoke test.",
-    description:
-      "A lightweight Python toolkit to validate Gemini API keys, list available text-generation models, and run interactive live smoke tests. Includes a pytest suite for baseline API verification.",
-    domain: "tools",
-    tags: ["Python", "Gemini", "DevTools"],
-    tech: ["Python", "Gemini API", "Pytest"],
-    year: 2026,
-    weight: 1,
-    github: gh("gemini-api-tester"),
-  },
-  {
-    slug: "comments-remover",
-    name: "Comments Remover",
-    headline: "Strip comments from almost any language, in the browser.",
-    description:
-      "A general-purpose comment remover covering almost any programming or markup language — C++, PHP, JavaScript, Python, HTML, Java, CSS and more — running entirely client-side.",
-    domain: "tools",
-    tags: ["JavaScript", "DevTools"],
-    tech: ["JavaScript", "HTML", "CSS", "Regex Parsing"],
-    year: 2023,
-    weight: 1,
-    github: gh("comments-remover"),
-    live: "https://ishanavasthi.in/projects/comments-remover",
-  },
-  {
-    slug: "web-scraper",
-    name: "Web Scraper",
-    headline: "CLI scraper for product listings across three Indian marketplaces.",
-    description:
-      "A Python CLI that extracts product name and canonical URL from Amazon, Flipkart, and Snapdeal listings using requests and BeautifulSoup, with a per-site parsing strategy behind one prompt-driven interface.",
-    domain: "tools",
-    tags: ["Python", "DevTools", "Data"],
-    tech: ["Python", "BeautifulSoup", "Requests"],
-    year: 2023,
-    weight: 1,
-    github: gh("web-scraper"),
-  },
 
   // ─── Full-Stack & Web ──────────────────────────────────────────────────
   {
@@ -432,46 +392,6 @@ export const projects: readonly Project[] = [
     weight: 1,
     github: gh("portfolio"),
     live: "https://ishanavasthi.in",
-  },
-  {
-    slug: "hotel-booking",
-    name: "Hotel Booking Chatbot",
-    headline: "Session-aware LLM chatbot for hotel enquiries and bookings.",
-    description:
-      "A Node.js hotel booking chatbot that handles enquiries and reservations through conversation, keeping per-session state behind a single /chat REST endpoint.",
-    domain: "web",
-    tags: ["JavaScript", "Full-Stack"],
-    tech: ["Node.js", "Express", "OpenAI API"],
-    year: 2025,
-    weight: 1,
-    github: gh("hotel-booking"),
-  },
-  {
-    slug: "iitjee.art",
-    name: "iitjee.art",
-    headline: "Search and browse a Google Drive library from one web app.",
-    description:
-      "A web app over the Google Drive API for organising, viewing, and searching files, folders, and study documents without digging through Drive's own UI.",
-    domain: "web",
-    tags: ["JavaScript", "Full-Stack"],
-    tech: ["JavaScript", "Google Drive API", "HTML", "CSS"],
-    year: 2023,
-    weight: 1,
-    github: gh("iitjee.art"),
-    live: "https://iitjee.art",
-  },
-  {
-    slug: "sst-hackathon",
-    name: "HTML Minifier",
-    headline: "Two-way HTML minifier and unminifier, built at a hackathon.",
-    description:
-      "A browser-based HTML minifier and unminifier — strip whitespace, comments, and line breaks, or restore readable formatting from minified markup. Built for the SST hackathon.",
-    domain: "web",
-    tags: ["JavaScript", "DevTools"],
-    tech: ["JavaScript", "HTML", "CSS"],
-    year: 2023,
-    weight: 1,
-    github: gh("sst-hackathon"),
   },
 
   // ─── Foundations ───────────────────────────────────────────────────────

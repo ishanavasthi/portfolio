@@ -11,7 +11,7 @@ export type ProjectActivity = {
 };
 
 /** When this file was last regenerated. Rendered as the "as of" in the UI. */
-export const ACTIVITY_SYNCED_AT = "2026-09-03T23:27:50.676Z";
+export const ACTIVITY_SYNCED_AT = "2026-09-03T23:48:14.159Z";
 
 /** Keyed by project slug, which is also the GitHub repo name. */
 export const PROJECT_ACTIVITY: Readonly<Record<string, ProjectActivity>> = {
@@ -30,7 +30,6 @@ export const PROJECT_ACTIVITY: Readonly<Record<string, ProjectActivity>> = {
   "swiggy-claw": { started: "2026-05-31T08:57:04Z", updated: "2026-07-30T01:34:13Z", commits: 21 },
   "preflight": { started: "2026-07-26T19:32:15Z", updated: "2026-07-27T21:49:53Z", commits: 33 },
   "agentgrid": { started: "2026-07-11T05:04:17Z", updated: "2026-07-16T12:49:59Z", commits: 12 },
-  "gemini-api-tester": { started: "2026-07-11T06:36:57Z", updated: "2026-07-11T06:36:57Z", commits: 1 },
   "composio-research": { started: "2026-07-09T14:31:47Z", updated: "2026-07-09T17:52:25Z", commits: 5 },
   "markdown-copier": { started: "2026-06-20T20:45:42Z", updated: "2026-06-20T20:45:42Z", commits: 1 },
   "swiggy-n8n": { started: "2026-06-04T15:30:00Z", updated: "2026-06-04T15:35:00Z", commits: 2 },
@@ -44,14 +43,9 @@ export const PROJECT_ACTIVITY: Readonly<Record<string, ProjectActivity>> = {
   "rn-assignment-ishanavasthi": { started: "2025-11-26T06:46:26Z", updated: "2025-11-26T06:46:26Z", commits: 1 },
   "lld-assignment": { started: "2025-08-19T15:42:26Z", updated: "2025-08-19T17:37:54Z", commits: 2 },
   "spring-book": { started: "2025-05-07T14:52:48Z", updated: "2025-05-07T15:43:33Z", commits: 3 },
-  "hotel-booking": { started: "2025-02-20T22:58:52Z", updated: "2025-02-20T22:58:52Z", commits: 1 },
   "Product-Service": { started: "2024-03-31T17:55:49Z", updated: "2024-10-10T02:19:27Z", commits: 16 },
   "Patient-Record-System": { started: "2024-05-01T09:43:44Z", updated: "2024-05-02T06:47:45Z", commits: 19 },
   "aerofit-analysis": { started: "2024-03-20T17:13:50Z", updated: "2024-03-20T20:18:13Z", commits: 9 },
   "cart-service": { started: "2024-03-12T10:17:31Z", updated: "2024-03-12T12:14:54Z", commits: 10 },
-  "comments-remover": { started: "2023-09-24T15:12:30Z", updated: "2024-02-08T12:10:19Z", commits: 5 },
   "image-editor": { started: "2023-11-24T16:59:25Z", updated: "2023-11-24T17:32:24Z", commits: 8 },
-  "web-scraper": { started: "2023-11-07T14:29:01Z", updated: "2023-11-07T15:12:18Z", commits: 4 },
-  "sst-hackathon": { started: "2023-08-12T07:40:39Z", updated: "2023-08-12T15:20:17Z", commits: 11 },
-  "iitjee.art": { started: "2023-06-02T12:28:44Z", updated: "2023-06-18T18:46:08Z", commits: 8 },
 };
