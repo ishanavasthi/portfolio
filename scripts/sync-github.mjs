@@ -41,6 +41,15 @@ const EXCLUDED = {
   "resume-builder": "empty repo",
   "lld-assignment2": "empty repo",
   ishanavasthi: "GitHub profile README",
+  "sleep-fix": "single-page circadian planner toy, below the web weight-1 bar",
+  "claw-case-study": "static write-up page for swiggy-claw, not a project on its own",
+  // Retired by owner (2026-09-04) — never list or suggest these again.
+  "sst-hackathon": "retired: HTML Minifier",
+  "hotel-booking": "retired: Hotel Booking Chatbot",
+  "iitjee.art": "retired",
+  "gemini-api-tester": "retired: Gemini API Tester",
+  "comments-remover": "retired: Comments Remover",
+  "web-scraper": "retired: Web Scraper",
 };
 
 function gh(args) {
