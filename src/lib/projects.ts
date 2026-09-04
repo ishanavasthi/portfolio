@@ -518,7 +518,15 @@ export const projects: readonly Project[] = [
   },
 ] as const;
 
-export const featuredProjects = projects.filter((p) => p.featured);
+/**
+ * Selected-work order. Projects with a screenshot lead — they carry the
+ * visual weight of the grid — and everything else keeps its curated array
+ * order behind them (sort is stable). Single source for the home ledger and
+ * the /projects hero grid so both surfaces agree.
+ */
+export const featuredProjects = projects
+  .filter((p) => p.featured)
+  .sort((a, b) => Number(Boolean(b.image)) - Number(Boolean(a.image)));
 
 export function projectsByDomain(domain: DomainId) {
   return projects.filter((p) => p.domain === domain);
