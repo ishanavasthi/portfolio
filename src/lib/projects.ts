@@ -85,6 +85,10 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: gh("clinicflow"),
     live: "https://link.ishanavasthi.in/clinicflow-video",
+    image: {
+      src: "/projects/clinicflow-dashboard.webp",
+      alt: "ClinicFlow operator dashboard: receptionist status, simulate-call console, and department roster",
+    },
   },
   {
     slug: "agentgrid",
@@ -106,7 +110,7 @@ export const projects: readonly Project[] = [
     name: "AlphaDesk",
     headline: "Multi-tenant portfolio analyzer for Indian investors, narrated by agents that can't invent a number.",
     description:
-      "Shipped v2 as a real product: sign in with Clerk, link an IND Money account over MCP, and get net worth, allocation, holdings, and a nightly net-worth trend, with an AI overview written by a fan-out of specialist agents. Every figure is computed in Python first, and any digit an agent writes freehand trips a scripted fallback, so the narrative can never fabricate one. Per-user broker tokens are Fernet-encrypted in Neon Postgres; the original multi-agent research desk lives on as a labelled paper-trading Lab.",
+      "Sign in with Clerk, link an IND Money account over MCP, and get net worth, allocation, holdings, and a nightly net-worth trend, with an AI overview written by a fan-out of specialist agents. Every figure is computed in Python first, and any digit an agent writes freehand trips a scripted fallback, so the narrative can never fabricate one. Per-user broker tokens are Fernet-encrypted in Neon Postgres; a labelled paper-trading Lab runs the multi-agent research desk as a simulation, never mixed with real holdings.",
     domain: "agents",
     tags: ["Python", "TypeScript", "LangGraph", "FastAPI", "Next.js", "MCP", "Multi-Agent", "Full-Stack"],
     tech: ["LangGraph", "FastAPI", "Next.js", "TypeScript", "Clerk", "Neon Postgres", "SQLModel + Alembic", "IND Money MCP", "OpenAI", "Groq"],
