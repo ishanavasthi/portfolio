@@ -10,7 +10,12 @@ import {
 import { Reveal } from "@/components/motion/reveal";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
 
-export function About() {
+/**
+ * `activity` is the live GitHub calendar — an async server component, so it's
+ * rendered by the page and handed in as a slot rather than imported into this
+ * client boundary.
+ */
+export function About({ activity }: { activity?: React.ReactNode }) {
   const skipEntrance = useSkipEntrance();
   return (
     <section
@@ -49,6 +54,11 @@ export function About() {
             . I care about testing things properly, making systems easy to
             work with, and shipping stuff that holds up in the real world.
           </motion.p>
+          {activity ? (
+            <motion.div variants={fadeUpItem} className="mt-14">
+              {activity}
+            </motion.div>
+          ) : null}
         </motion.div>
       </div>
     </section>

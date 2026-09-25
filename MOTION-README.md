@@ -90,6 +90,11 @@ technical.
   1px line; the count-up runs once per visit; the radar ping is one ring every
   3.2s on a 0.55em dot; the stats circuit is one ~3.6s pass on 1px lines
   followed by 4.4s of rest. None of them loop visibly enough to pull the eye.
+- **The GitHub calendar doesn't animate.** `sections/github-activity.tsx`
+  (live contribution grid in About) rides About's existing `fadeUpItem`
+  stagger as one block — no per-cell cascade, no count-up on the totals. It's
+  a record, not a moment; 371 cells rippling in would compete with
+  `DotLattice`.
 - **One `TextReveal`, one `MagneticButton`.** The hero headline and the hero CTA.
   Applying either twice turns a first impression into a mannerism.
 - Everything else — `Reveal`, the stagger groups, the route transition — is
