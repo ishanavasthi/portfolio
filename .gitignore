@@ -49,3 +49,4 @@ DECISIONS.md
 .claude/**/*.local.json
 .claude/**/.env*
 .mcp.json
+.firecrawl/
