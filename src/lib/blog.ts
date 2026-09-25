@@ -6,6 +6,8 @@ export type BlogFrontmatter = {
   title: string;
   date: string;
   summary: string;
+  /** Kept in the repo but never published: no page, no listing, no sitemap or llms entry. */
+  draft?: boolean;
 };
 
 export type BlogPostMeta = BlogFrontmatter & {
@@ -21,6 +23,9 @@ const BLOG_DIR = path.join(process.cwd(), "src", "content", "blog");
 
 const WORDS_PER_MINUTE = 220;
 
+/** Drafts render under `next dev` so they can be previewed, and nowhere else. */
+const SHOW_DRAFTS = process.env.NODE_ENV === "development";
+
 function calcReadingTime(markdown: string): number {
   const words = markdown
     .replace(/```[\s\S]*?```/g, " ")
@@ -35,13 +40,13 @@ function assertFrontmatter(
   data: Record<string, unknown>,
   slug: string,
 ): BlogFrontmatter {
-  const { title, date, summary } = data;
+  const { title, date, summary, draft } = data;
   if (typeof title !== "string" || typeof date !== "string" || typeof summary !== "string") {
     throw new Error(
       `Blog post "${slug}" is missing required frontmatter (title, date, summary).`,
     );
   }
-  return { title, date, summary };
+  return { title, date, summary, draft: draft === true };
 }
 
 export function getAllPostSlugs(): string[] {
@@ -49,7 +54,8 @@ export function getAllPostSlugs(): string[] {
   return fs
     .readdirSync(BLOG_DIR)
     .filter((f) => f.endsWith(".mdx"))
-    .map((f) => f.replace(/\.mdx$/, ""));
+    .map((f) => f.replace(/\.mdx$/, ""))
+    .filter((slug) => getPost(slug) !== null);
 }
 
 export function getPost(slug: string): BlogPost | null {
@@ -58,6 +64,7 @@ export function getPost(slug: string): BlogPost | null {
   const raw = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(raw);
   const fm = assertFrontmatter(data, slug);
+  if (fm.draft && !SHOW_DRAFTS) return null;
   return {
     ...fm,
     slug,
