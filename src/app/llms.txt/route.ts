@@ -1,28 +1,28 @@
 import { site, socials } from "@/lib/site";
 import { projects } from "@/lib/projects";
 import { getAllPosts } from "@/lib/blog";
-import { SKILLS } from "@/lib/skills";
+import {
+  BIO,
+  LLMS_HEADERS,
+  domainsWithProjects,
+  header,
+  postUrl,
+  primaryLink,
+  profileLines,
+  skillsSection,
+} from "@/lib/llms";
 
 export const dynamic = "force-static";
 
 function projectsSection(): string {
-  const lines = projects.map((p) => {
-    const url = p.live ?? p.github ?? site.url;
-    return `- [${p.name}](${url}): ${p.description}`;
-  });
-  return ["## Projects", "", ...lines].join("\n");
-}
-
-function skillsSection(): string {
-  const lines = SKILLS.map((category) => {
-    const chips = category.chips.map((c) => c.label).join(", ");
-    const proof = category.proof();
-    const proofText = proof.secondaryValue
-      ? `${proof.value} ${proof.unit}, ${proof.secondaryValue} ${proof.secondaryUnit}`
-      : `${proof.value} ${proof.unit}`;
-    return `- **${category.name}**${category.sub ? ` (${category.sub})` : ""}: ${chips} — ${proofText}`;
-  });
-  return ["## Skills", "", ...lines].join("\n");
+  const groups = domainsWithProjects().map(({ domain, list }) =>
+    [
+      `### ${domain.label}`,
+      "",
+      ...list.map((p) => `- [${p.name}](${primaryLink(p)}): ${p.headline}`),
+    ].join("\n"),
+  );
+  return [`## Projects (${projects.length})`, "", groups.join("\n\n")].join("\n");
 }
 
 function writingSection(): string {
@@ -31,10 +31,19 @@ function writingSection(): string {
     return ["## Writing", "", "_No posts yet._"].join("\n");
   }
   const lines = posts.map(
-    (p) =>
-      `- [${p.title}](${site.url}/blog/${p.slug}): ${p.summary} (${p.date})`,
+    (p) => `- [${p.title}](${postUrl(p.slug)}): ${p.summary} (${p.date})`,
   );
   return ["## Writing", "", ...lines].join("\n");
+}
+
+function docsSection(): string {
+  return [
+    "## Docs",
+    "",
+    `- [Full context](${site.url}/llms-full.txt): every project's full description, stack, links and commit activity, plus the complete text of every blog post, in one file`,
+    `- [Projects page](${site.url}/projects): the filterable project archive`,
+    `- [Sitemap](${site.url}/sitemap.xml)`,
+  ].join("\n");
 }
 
 function optionalSection(): string {
@@ -49,11 +58,13 @@ function optionalSection(): string {
 
 function buildLlmsTxt(): string {
   return [
-    `# ${site.name}`,
+    header(),
     "",
-    `> ${site.title} — ${site.description}`,
+    BIO[0],
     "",
-    "Personal portfolio. Source of truth for projects and writing.",
+    ...profileLines(),
+    "",
+    docsSection(),
     "",
     skillsSection(),
     "",
@@ -67,10 +78,5 @@ function buildLlmsTxt(): string {
 }
 
 export function GET() {
-  return new Response(buildLlmsTxt(), {
-    headers: {
-      "Content-Type": "text/markdown; charset=utf-8",
-      "Cache-Control": "public, max-age=0, must-revalidate",
-    },
-  });
+  return new Response(buildLlmsTxt(), { headers: LLMS_HEADERS });
 }
