@@ -10,7 +10,7 @@ import { TextReveal } from "@/components/motion/text-reveal";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 
 const btnBase =
-  "inline-flex items-center gap-2 rounded-[6px] border border-border px-5 py-[11px] font-mono text-[13px] text-foreground transition-colors duration-[0.18s] ease-out hover:border-accent hover:text-accent";
+  "inline-flex items-center gap-2 rounded-[6px] border border-border px-5 py-[11px] font-mono text-[13px] text-foreground transition-[color,border-color,scale] duration-[160ms] ease-out hover:border-accent hover:text-accent motion-safe:active:scale-[0.97]";
 
 export function Hero() {
   const skipEntrance = useSkipEntrance();

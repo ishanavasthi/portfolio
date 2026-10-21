@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/icons/brand";
+import { FadeInImage } from "@/components/motion/fade-in-image";
 import { TiltCard } from "@/components/motion/tilt-card";
 import { EASE_SIGNATURE } from "@/lib/motion/variants";
 import type { Project } from "@/lib/projects";
@@ -71,6 +71,7 @@ export function ProjectCard({
     >
       <TiltCard className="h-full">
         <div
+          data-card-frame
           className={cn(
             "relative flex h-full flex-col gap-4 rounded-[6px] border border-border bg-[--surface] px-5 py-5 transition-colors duration-[180ms] ease-out",
             "hover:border-accent/60 hover:bg-white/[0.015]",
@@ -112,13 +113,13 @@ export function ProjectCard({
           </p>
           {project.image ? (
             <span className="block overflow-hidden rounded-[4px] border border-border">
-              <Image
+              <FadeInImage
                 src={project.image.src}
                 alt={project.image.alt}
                 width={800}
                 height={500}
                 loading="lazy"
-                className="aspect-[16/10] w-full object-cover object-top transition-transform duration-[300ms] ease-out group-hover:scale-[1.015]"
+                className="aspect-[16/10] w-full object-cover object-top group-hover:scale-[1.015]"
               />
             </span>
           ) : null}
