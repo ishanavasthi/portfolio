@@ -31,6 +31,18 @@ export type Project = {
     src: string;
     alt: string;
   };
+  /**
+   * Optional short silent loop, served from /public/projects. Takes the same
+   * 16/10 slot as `image` (and wins over it). The poster is a frame that reads
+   * on its own: it is all that reduced-motion and static-capture visitors get,
+   * and the video file is never requested for them.
+   */
+  video?: {
+    mp4: string;
+    webm?: string;
+    poster: string;
+    alt: string;
+  };
 };
 
 const gh = (slug: string) => `https://github.com/ishanavasthi/${slug}`;
@@ -70,6 +82,12 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: gh("preflight"),
     live: "https://link.ishanavasthi.in/preflight-video",
+    video: {
+      mp4: "/projects/preflight-a.mp4",
+      webm: "/projects/preflight-a.webm",
+      poster: "/projects/preflight-a-poster.webp",
+      alt: "Preflight's PR comment: five of six agent metrics over threshold, p95 latency up 167%, biggest mover damaged-item linked to its SigNoz trace",
+    },
   },
   {
     slug: "clinicflow",
