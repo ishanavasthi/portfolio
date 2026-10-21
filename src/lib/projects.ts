@@ -83,9 +83,9 @@ export const projects: readonly Project[] = [
     github: gh("preflight"),
     live: "https://link.ishanavasthi.in/preflight-video",
     video: {
-      mp4: "/projects/preflight-a.mp4",
-      webm: "/projects/preflight-a.webm",
-      poster: "/projects/preflight-a-poster.webp",
+      mp4: "/projects/preflight.mp4",
+      webm: "/projects/preflight.webm",
+      poster: "/projects/preflight-poster.webp",
       alt: "Preflight's PR comment: five of six agent metrics over threshold, p95 latency up 167%, biggest mover damaged-item linked to its SigNoz trace",
     },
   },

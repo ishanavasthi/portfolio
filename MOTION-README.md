@@ -45,8 +45,10 @@ own while you look at something else. Authoring rules for new ones: 16:10
 (1280x800), 6–10s, seamless loop, no audio, one ease family (power4 ≈
 `EASE_SIGNATURE`), large type, and a poster frame that reads on its own.
 Encode MP4 (H.264, CRF ~28, `+faststart`, no audio track) plus WebM (VP9),
-each under ~1.5 MB. `/lab/preflight-video` (noindex, unlinked) compares the
-three candidate styles in the real card.
+each under ~1.5 MB. The house style is "artifact": the project's literal UI
+with a camera move and one highlighted moment, not a diagram or a type
+sequence. Files are named `public/projects/<slug>.mp4`, `<slug>.webm` and
+`<slug>-poster.webp`.
 
 ## The cursor layer
 
