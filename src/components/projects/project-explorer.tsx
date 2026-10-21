@@ -34,8 +34,45 @@ import {
   type TagGroupId,
 } from "@/lib/taxonomy";
 import { motion, type Variants } from "framer-motion";
-import { EASE_SIGNATURE } from "@/lib/motion/variants";
+import { EASE_SIGNATURE, fadeUpItem } from "@/lib/motion/variants";
 import { useSkipEntrance } from "@/components/motion/use-skip-entrance";
+
+/**
+ * After a ⌘K jump, ring the card the visitor landed on so they can find it
+ * among the others. The ring itself is the `landed-ring` keyframe on
+ * `[data-landed] [data-card-frame]` in globals.css; this only decides when to
+ * start it: once the scroll settles, or straight away if the card was already
+ * centered and nothing scrolled.
+ */
+function markLanding(el: HTMLElement) {
+  let started = false;
+  const start = () => {
+    if (started) return;
+    started = true;
+    window.removeEventListener("scrollend", start);
+    // Restart cleanly if the same card is picked twice in a row.
+    delete el.dataset.landed;
+    void el.offsetWidth;
+    el.dataset.landed = "";
+    const clear = (e: AnimationEvent) => {
+      if (e.animationName !== "landed-ring") return;
+      delete el.dataset.landed;
+      el.removeEventListener("animationend", clear);
+    };
+    el.addEventListener("animationend", clear);
+  };
+  const rect = el.getBoundingClientRect();
+  const alreadyCentered =
+    Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2) < 4;
+  if (alreadyCentered) return start();
+  if (typeof window.onscrollend !== "undefined") {
+    window.addEventListener("scrollend", start, { once: true });
+    // scrollend never fires if the browser decides no scroll was needed.
+    window.setTimeout(start, 1500);
+  } else {
+    window.setTimeout(start, 600);
+  }
+}
 
 const VALID_DOMAINS = new Set<string>(DOMAINS.map((d) => d.id));
 const VALID_TAGS = new Set<string>(ALL_TAGS);
@@ -133,14 +170,19 @@ export function ProjectExplorer() {
       const findAndScroll = () => {
         const el = document.getElementById(`project-${slug}`);
         if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          // Reduced motion jumps instead of gliding past 30-odd cards.
+          el.scrollIntoView({
+            behavior: skipEntrance ? "auto" : "smooth",
+            block: "center",
+          });
+          markLanding(el);
           return;
         }
         if (frames++ < 60) requestAnimationFrame(findAndScroll);
       };
       requestAnimationFrame(findAndScroll);
     },
-    [commit],
+    [commit, skipEntrance],
   );
 
   const toggleTagFromCard = React.useCallback(
@@ -211,25 +253,31 @@ export function ProjectExplorer() {
         />
 
         {filtered.length === 0 ? (
-          <Empty className="border">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <SearchX />
-              </EmptyMedia>
-              <EmptyTitle>No projects match</EmptyTitle>
-              <EmptyDescription>
-                That combination of domain and tags is empty. Try removing a
-                filter.
-              </EmptyDescription>
-            </EmptyHeader>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => commit({ domain: "all", tags: [] })}
-            >
-              Reset filters
-            </Button>
-          </Empty>
+          <motion.div
+            variants={fadeUpItem}
+            initial={skipEntrance ? "show" : "hidden"}
+            animate="show"
+          >
+            <Empty className="border">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <SearchX />
+                </EmptyMedia>
+                <EmptyTitle>No projects match</EmptyTitle>
+                <EmptyDescription>
+                  That combination of domain and tags is empty. Try removing a
+                  filter.
+                </EmptyDescription>
+              </EmptyHeader>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => commit({ domain: "all", tags: [] })}
+              >
+                Reset filters
+              </Button>
+            </Empty>
+          </motion.div>
         ) : (
           <div className="flex flex-col gap-12">
             {liveDomains.map((d) => (

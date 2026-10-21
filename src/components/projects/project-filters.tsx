@@ -244,9 +244,13 @@ export function ProjectFilters({
       ) : null}
 
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+        {/* Opened from ⌘K, so it appears and leaves instantly: a palette
+            summoned from the keyboard many times a day shouldn't make you
+            wait for a zoom. */}
         <DialogContent
           showCloseButton={false}
-          className="overflow-hidden p-0 sm:max-w-lg"
+          className="overflow-hidden p-0 data-[state=open]:animate-none data-[state=closed]:animate-none sm:max-w-lg"
+          overlayClassName="data-[state=open]:animate-none data-[state=closed]:animate-none"
         >
           <DialogTitle className="sr-only">Search projects</DialogTitle>
           <Command

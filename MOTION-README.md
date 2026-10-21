@@ -20,6 +20,7 @@ here, and don't add a second thing that demands attention.
 | `src/components/motion/dot-lattice.tsx` | `DotLattice` | Behind the hero **only** (`sections/hero.tsx`) — **the homepage signature moment**. A canvas grid of faint dots that lean toward the cursor and warm to the signal color around it. |
 | `src/components/motion/cursor-spotlight.tsx` | `CursorSpotlight` | Mounted once in `app/layout.tsx`. A whisper-alpha radial glow trailing the cursor on every page except `/projects`, where TiltCard is the only allowed light source. |
 | `src/components/motion/count-up.tsx` | `CountUp` | The four numbers in the stats band (`sections/stats.tsx`). Rolls 0 → value on first reveal; server HTML always carries the real number. |
+| `src/components/motion/fade-in-image.tsx` | `FadeInImage` | Project card screenshots (`components/projects/project-card.tsx`). next/image that fades a lazy image in over 250ms when it arrives; server HTML and cached images render opaque with no fade, static capture never fades. |
 | `src/app/template.tsx` | default `Template` | Wraps every route. 0.3s fade-and-rise on the template remount Next.js performs per navigation — no state, no exit animation, nothing to fight that remount. |
 
 Three micro-interactions live outside the kit as CSS keyframes in
@@ -33,6 +34,22 @@ center divider, drops down it, and exits along the bottom line; md+ only, and
 the strips are mounted only while the band is in view). The first two are
 disabled by `motion-reduce:`; the circuit is gated through `useSkipEntrance`
 like the kit components.
+
+Feedback and wayfinding, also outside the kit:
+
+- **Landing ring** (`landed-ring` in `globals.css`, started by `markLanding`
+  in `components/projects/project-explorer.tsx`). After a ⌘K jump the card you
+  landed on gets a 1px accent ring once the scroll settles: 150ms in, 400ms
+  hold, 600ms out. Opacity only, so it stays on under reduced motion. The
+  jump itself is instant under reduced motion.
+- **Press scale** on the hero buttons (`btnBase` in `sections/hero.tsx`):
+  `scale(0.97)` over 160ms while pressed, `motion-safe:` only. It sits on the
+  anchor, so the `MagneticButton` wrapper's pull is unaffected.
+- **Empty state** on `/projects` rises in once with `fadeUpItem`.
+- **Not animated on purpose:** the ⌘K search dialog opens and closes
+  instantly (it's summoned from the keyboard). The mobile menu sheet slides
+  with the iOS drawer curve `cubic-bezier(0.32, 0.72, 0, 1)`, 300ms in and
+  200ms out, and fades instead of sliding under reduced motion.
 
 ## The cursor layer
 

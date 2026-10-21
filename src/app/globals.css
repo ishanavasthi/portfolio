@@ -217,6 +217,37 @@
   }
 }
 
+/* The ⌘K landing ring: after a search jump scrolls a card into view, a 1px
+   accent ring fades in, holds, and fades out so the eye finds the card among
+   the others. Opacity only, on a pseudo-element, so it composites and leaves
+   the card's own border transition alone. 1150ms total: 150ms in, 400ms
+   hold, 600ms out. Kept under reduced motion: nothing moves. */
+@keyframes landed-ring {
+  0% {
+    opacity: 0;
+  }
+  13% {
+    opacity: 1;
+  }
+  48% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+[data-landed] [data-card-frame]::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--accent);
+  border-radius: inherit;
+  pointer-events: none;
+  animation: landed-ring 1150ms linear both;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
