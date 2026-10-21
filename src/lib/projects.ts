@@ -141,6 +141,12 @@ export const projects: readonly Project[] = [
       src: "/projects/alphadesk-demo.png",
       alt: "AlphaDesk demo dashboard: net worth cards, AI overview, and allocation breakdown",
     },
+    video: {
+      mp4: "/projects/alphadesk.mp4",
+      webm: "/projects/alphadesk.webm",
+      poster: "/projects/alphadesk-poster.webp",
+      alt: "AlphaDesk demo portfolio: the AI overview's overall-return sentence with +₹88,905 and +8.4% as metric chips bound to the computed Overall return card",
+    },
   },
   {
     slug: "swiggy-claw",
