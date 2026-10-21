@@ -38,7 +38,7 @@ const ACTIVITY_FILE = join(root, "src/lib/project-activity.ts");
 const EXCLUDED = {
   itube: "not original work — re-upload of alexta69/metube",
   "sample-typesript-app": "scratch app, nothing to show",
-  "resume-builder": "empty repo",
+  "resume-builder": "private resume sources; resume-tailor is the public skill built from it",
   "lld-assignment2": "empty repo",
   ishanavasthi: "GitHub profile README",
   "sleep-fix": "single-page circadian planner toy, below the web weight-1 bar",
