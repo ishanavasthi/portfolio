@@ -11,18 +11,19 @@ export type ProjectActivity = {
 };
 
 /** When this file was last regenerated. Rendered as the "as of" in the UI. */
-export const ACTIVITY_SYNCED_AT = "2026-09-03T23:48:14.159Z";
+export const ACTIVITY_SYNCED_AT = "2026-10-21T17:45:15.535Z";
 
 /** Keyed by project slug, which is also the GitHub repo name. */
 export const PROJECT_ACTIVITY: Readonly<Record<string, ProjectActivity>> = {
-  "agent-store": { started: "2026-08-21T22:38:24Z", updated: "2026-09-03T17:38:15Z", commits: 151 },
-  "EventHive": { started: "2026-02-20T09:00:00Z", updated: "2026-08-29T16:23:07Z", commits: 46 },
+  "EventHive": { started: "2026-02-20T09:00:00Z", updated: "2026-10-21T11:54:56Z", commits: 47 },
+  "alphadesk": { started: "2026-06-24T14:11:57Z", updated: "2026-10-17T10:02:52Z", commits: 281 },
+  "clinicflow": { started: "2026-07-18T00:13:40Z", updated: "2026-10-14T20:21:23Z", commits: 84 },
+  "agent-store": { started: "2026-08-21T22:38:24Z", updated: "2026-10-13T20:54:13Z", commits: 155 },
+  "resume-tailor": { started: "2026-09-25T18:20:37Z", updated: "2026-09-25T21:50:30Z", commits: 19 },
+  "portfolio": { started: "2026-04-29T21:10:18Z", updated: "2026-09-25T20:07:56Z", commits: 69 },
   "lenny-growth-assistant": { started: "2026-08-23T22:12:02Z", updated: "2026-08-26T18:40:59Z", commits: 65 },
-  "alphadesk": { started: "2026-06-24T14:11:57Z", updated: "2026-08-22T16:19:39Z", commits: 240 },
-  "portfolio": { started: "2026-04-29T21:10:18Z", updated: "2026-08-16T15:31:03Z", commits: 58 },
   "insurance-claim-env": { started: "2026-03-27T09:27:49Z", updated: "2026-08-14T17:41:56Z", commits: 4 },
   "panorama": { started: "2026-08-06T20:48:06Z", updated: "2026-08-09T12:01:46Z", commits: 25 },
-  "clinicflow": { started: "2026-07-18T00:13:40Z", updated: "2026-08-06T23:16:47Z", commits: 45 },
   "verdict-desk": { started: "2026-08-03T20:32:39Z", updated: "2026-08-05T11:35:35Z", commits: 72 },
   "personalized-message-router": { started: "2026-07-28T06:51:54Z", updated: "2026-08-03T21:55:30Z", commits: 82 },
   "reviewgrid": { started: "2026-07-28T07:47:42Z", updated: "2026-08-03T20:29:44Z", commits: 18 },
