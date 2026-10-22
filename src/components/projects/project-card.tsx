@@ -6,6 +6,7 @@ import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { GithubIcon } from "@/components/icons/brand";
 import { TiltCard } from "@/components/motion/tilt-card";
+import { ProjectVideo } from "@/components/projects/project-video";
 import { EASE_SIGNATURE } from "@/lib/motion/variants";
 import type { Project } from "@/lib/projects";
 import { sortTags } from "@/lib/taxonomy";
@@ -71,6 +72,7 @@ export function ProjectCard({
     >
       <TiltCard className="h-full">
         <div
+          data-project-card
           className={cn(
             "relative flex h-full flex-col gap-4 rounded-[6px] border border-border bg-[--surface] px-5 py-5 transition-colors duration-[180ms] ease-out",
             "hover:border-accent/60 hover:bg-white/[0.015]",
@@ -110,7 +112,9 @@ export function ProjectCard({
           <p className="text-sm leading-relaxed text-foreground/90">
             {project.headline}
           </p>
-          {project.image ? (
+          {project.video ? (
+            <ProjectVideo video={project.video} />
+          ) : project.image ? (
             <span className="block overflow-hidden rounded-[4px] border border-border">
               <Image
                 src={project.image.src}

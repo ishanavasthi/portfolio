@@ -31,6 +31,18 @@ export type Project = {
     src: string;
     alt: string;
   };
+  /**
+   * Optional short silent loop, served from /public/projects. Takes the same
+   * 16/10 slot as `image` (and wins over it). The poster is a frame that reads
+   * on its own: it is all that reduced-motion and static-capture visitors get,
+   * and the video file is never requested for them.
+   */
+  video?: {
+    mp4: string;
+    webm?: string;
+    poster: string;
+    alt: string;
+  };
 };
 
 const gh = (slug: string) => `https://github.com/ishanavasthi/${slug}`;
@@ -42,7 +54,7 @@ export const projects: readonly Project[] = [
     name: "Agent Store",
     headline: "Merchant-side agentic commerce: messy captions in, buyable MCP catalog out.",
     description:
-      "Turns long-tail sellers' Instagram and Hinglish captions into a catalog an AI buyer agent can buy from over MCP (6 buyer tools, 8 merchant tools) plus a REST twin. Extraction runs server-side and holds the whole product for the merchant if any field scores under 0.90; stock is never invented and prices are parsed by deterministic code, not the model. Purchases run a signed intent → cart → payment mandate chain with per-agent caps and per-purchase budgets on Razorpay test rails, and every check runs before the gateway is called, so a refusal means no money moved. Each decision lands in a hash-chained, append-only audit log that an independent rule-auditor recomputes: 30/30 protocol scenarios, 0 violations over 250 audit events, and 96–100% field accuracy on 28 hand-labelled captions. A real Claude buyer agent has completed a purchase end to end on test rails.",
+      "Turns long-tail sellers' Instagram and Hinglish captions into a catalog an AI buyer agent can buy from over MCP (6 buyer tools, 8 merchant tools) plus a REST twin. Extraction runs server-side and holds the whole product for the merchant if any field scores under 0.90; stock is never invented and prices are parsed by deterministic code, not the model. Purchases run a signed intent → cart → payment mandate chain with per-agent caps and per-purchase budgets on Razorpay test rails, and every check runs before the gateway is called, so a refusal means no money moved. Each decision lands in an append-only audit log that an independent rule-auditor recomputes: 30/30 protocol scenarios, 0 violations over 250 audit events, and 96–100% field accuracy on 28 hand-labelled captions. A real Claude buyer agent has completed a purchase end to end on test rails.",
     domain: "agents",
     tags: ["TypeScript", "MCP", "Claude", "Evals", "Full-Stack"],
     tech: ["TypeScript", "Node 22", "Express", "MCP SDK", "Drizzle", "Neon Postgres", "Ed25519", "Razorpay", "Zod", "React", "Vite", "Vitest"],
@@ -54,6 +66,12 @@ export const projects: readonly Project[] = [
     image: {
       src: "/projects/agent-store-viewer-order-replay.png",
       alt: "An order replayed event by event in the Agent Store audit viewer",
+    },
+    video: {
+      mp4: "/projects/agent-store.mp4",
+      webm: "/projects/agent-store.webm",
+      poster: "/projects/agent-store-poster.webp",
+      alt: "Agent Store refusing a buyer agent's MCP payment: the ₹1,299.00 cart exceeds the signed ₹1,000.00 budget, so the payment gateway is never called and OVER_BUDGET is appended to the audit log",
     },
   },
   {
@@ -70,13 +88,19 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: gh("preflight"),
     live: "https://link.ishanavasthi.in/preflight-video",
+    video: {
+      mp4: "/projects/preflight.mp4",
+      webm: "/projects/preflight.webm",
+      poster: "/projects/preflight-poster.webp",
+      alt: "Preflight's PR comment: five of six agent metrics over threshold, p95 latency up 167%, biggest mover damaged-item linked to its SigNoz trace",
+    },
   },
   {
     slug: "clinicflow",
     name: "ClinicFlow",
     headline: "Real-time AI voice receptionist for clinics, with a live operator dashboard.",
     description:
-      "A real-time voice agent that answers a patient call end to end (intake, booking, FAQs, routing to a department) while an operator dashboard mirrors the call live off the same LiveKit room. Every state change is an LLM function tool, and deterministic guardrails sit above the model: a red-flag symptom skips intake and routes to Emergency, no times are offered before intake is complete, and no booking is claimed that a tool didn't confirm. Three pipelines (cascaded on Groq, cascaded on OpenAI, or gpt-realtime speech-to-speech) swap by env var with tools and guardrails unchanged, and every turn's latency is broken down stage by stage. An eval harness of 20 fault-injected scenarios checks the database and tool trace before an LLM judge scores a frozen rubric; bounded policy edits took strict passes from 14/80 to 60/80, and 5/20 to 16/20 on held-out scenarios.",
+      "A real-time voice agent that answers a patient call end to end (intake, booking, FAQs, routing to a department) while an operator dashboard mirrors the call live off the same LiveKit room. Every state change is an LLM function tool. A red-flag symptom skips intake and routes the call to Emergency, which locks out further scheduling, and deterministic guardrails sit above the model: no times are offered before intake is complete, and no booking is claimed that a tool didn't confirm. Three pipelines (cascaded on Groq, cascaded on OpenAI, or gpt-realtime speech-to-speech) swap by env var with tools and guardrails unchanged, and every turn's latency is broken down stage by stage. An eval harness of 20 fault-injected scenarios checks the database and tool trace before an LLM judge scores a frozen rubric; bounded policy edits took strict passes from 14/80 to 60/80, and 5/20 to 16/20 on held-out scenarios.",
     domain: "agents",
     tags: ["Python", "TypeScript", "LiveKit", "FastAPI", "Groq", "Claude", "Next.js", "Voice AI", "Evals", "Full-Stack"],
     tech: ["Python", "LiveKit Agents", "Deepgram STT", "Groq", "OpenAI Realtime", "Rumik TTS", "Claude (eval judge)", "FastAPI", "SQLModel", "Next.js", "Zustand", "TanStack Query"],
@@ -88,6 +112,12 @@ export const projects: readonly Project[] = [
     image: {
       src: "/projects/clinicflow-dashboard.webp",
       alt: "ClinicFlow operator dashboard: receptionist status, simulate-call console, and department roster",
+    },
+    video: {
+      mp4: "/projects/clinicflow.mp4",
+      webm: "/projects/clinicflow.webm",
+      poster: "/projects/clinicflow-poster.webp",
+      alt: "ClinicFlow mid-intake: the caller reports severe chest pain and trouble breathing, the agent calls route_to_department(\"Emergency\"), the emergency lock engages, and the receptionist tells the caller to call their local emergency number",
     },
   },
   {
@@ -122,6 +152,12 @@ export const projects: readonly Project[] = [
     image: {
       src: "/projects/alphadesk-demo.png",
       alt: "AlphaDesk demo dashboard: net worth cards, AI overview, and allocation breakdown",
+    },
+    video: {
+      mp4: "/projects/alphadesk.mp4",
+      webm: "/projects/alphadesk.webm",
+      poster: "/projects/alphadesk-poster.webp",
+      alt: "AlphaDesk demo portfolio: the AI overview's overall-return sentence with +₹88,905 and +8.4% as metric chips bound to the computed Overall return card",
     },
   },
   {
