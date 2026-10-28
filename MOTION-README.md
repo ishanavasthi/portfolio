@@ -17,7 +17,7 @@ here, and don't add a second thing that demands attention.
 | `src/components/motion/text-reveal.tsx` | `TextReveal` | The hero `h1` **only** (`sections/hero.tsx`). Word-by-word rise behind per-word clip masks. Inherits `hidden`/`show` from the hero's stagger container by default; `standalone` drives its own entrance. |
 | `src/components/motion/magnetic-button.tsx` | `MagneticButton` | The hero "View projects" CTA **only** (`sections/hero.tsx`). Wraps rather than clones, so the anchor keeps its href, hover styles and focus ring. |
 | `src/components/motion/tilt-card.tsx` | `TiltCard` | `/projects` cards (`components/projects/project-card.tsx`) — **the `/projects` signature moment**. 3D tilt on a spring plus a raw-pointer mint spotlight. Used nowhere else, by design. |
-| `src/components/projects/project-video.tsx` | `ProjectVideo` | The 16/10 media slot of `ProjectCard` when a project has `video` (`src/lib/projects.ts`); currently Preflight and AlphaDesk (video wins over `image` when both are set). A short silent loop: plays on hover/focus-within (fine pointer) or at ≥60% visible (touch, one video at a time), fades over the poster in 200ms with `EASE_SIGNATURE`, pauses and rewinds on leave or a hidden tab. Under `useSkipEntrance` the `<video>` is never mounted, so the poster is the whole experience. |
+| `src/components/projects/project-video.tsx` | `ProjectVideo` | The 16/10 media slot of `ProjectCard` when a project has `video` (`src/lib/projects.ts`); twelve projects as of batch 2 (video wins over `image` when both are set). A short silent loop: plays on hover/focus-within (fine pointer) or at ≥60% visible (touch, one video at a time), fades over the poster in 200ms with `EASE_SIGNATURE`, pauses and rewinds on leave or a hidden tab. Under `useSkipEntrance` the `<video>` is never mounted, so the poster is the whole experience. |
 | `src/components/motion/dot-lattice.tsx` | `DotLattice` | Behind the hero **only** (`sections/hero.tsx`) — **the homepage signature moment**. A canvas grid of faint dots that lean toward the cursor and warm to the signal color around it. |
 | `src/components/motion/cursor-spotlight.tsx` | `CursorSpotlight` | Mounted once in `app/layout.tsx`. A whisper-alpha radial glow trailing the cursor on every page except `/projects`, where TiltCard is the only allowed light source. |
 | `src/components/motion/count-up.tsx` | `CountUp` | The four numbers in the stats band (`sections/stats.tsx`). Rolls 0 → value on first reveal; server HTML always carries the real number. |
@@ -45,10 +45,29 @@ own while you look at something else. Authoring rules for new ones: 16:10
 (1280x800), 6–10s, seamless loop, no audio, one ease family (power4 ≈
 `EASE_SIGNATURE`), large type, and a poster frame that reads on its own.
 Encode MP4 (H.264, CRF ~28, `+faststart`, no audio track) plus WebM (VP9),
-each under ~1.5 MB. The house style is "artifact": the project's literal UI
-with a camera move and one highlighted moment, not a diagram or a type
-sequence. Files are named `public/projects/<slug>.mp4`, `<slug>.webm` and
-`<slug>-poster.webp`.
+each under ~1.5 MB. Files are named `public/projects/<slug>.mp4`,
+`<slug>.webm` and `<slug>-poster.webp`.
+
+**One form per project.** The first four loops all used the same frame (a
+dark panel, mono labels, one highlighted row) and read as one video repeated.
+Since batch 2 every loop takes the form of the thing the project actually
+produces, and no two share a layout:
+
+| Loop | Form |
+| --- | --- |
+| Preflight, AlphaDesk, Agent Store, ClinicFlow | the product's literal UI with one highlighted moment |
+| AgentGrid | swimlane timeline, playhead sweeping lanes |
+| Panorama | full-bleed terminal, output streaming line by line |
+| Swiggy Claw | a chat thread with tool-call chips and the guard's refusal |
+| ReviewGrid | a unified diff with line-anchored annotations and a verdict stamp |
+| Verdict Desk | typographic state machine with the psql error under it |
+| Message Router | three-column sorting board, cards travelling into columns |
+| KV-Cache | one number filling the frame over a progress rule |
+| Lenny Growth Assistant | reader view, a citation chip opening into a scrubber |
+
+Pick a form the project does not already share with another card before
+authoring a new loop. Sources live outside the repo (the `hf/` folder next to
+the worktree that built them); only the encoded files are committed.
 
 ## The cursor layer
 
