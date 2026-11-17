@@ -11,7 +11,8 @@ export const metadata: Metadata = {
   title: "Blog",
   ...pageMetadata({
     title: `Blog - ${site.name}`,
-    description: "Notes on AI engineering, LLM apps, and developer tooling.",
+    description:
+      "Notes on AI engineering, LLM apps, and developer tooling: long-form write-ups on building, testing and shipping AI agents.",
     path: "/blog",
   }),
 };
