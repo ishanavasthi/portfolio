@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/json-ld";
 import { breadcrumbNode, graph, pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-const description = `${projects.length} projects across agent systems, RAG, RL environments, developer tools, and full-stack web.`;
+const description = `${projects.length} projects across agent systems, RAG, RL environments, developer tools, and full-stack web, grouped by domain and filterable by stack.`;
 
 export const metadata: Metadata = {
   title: "Projects",

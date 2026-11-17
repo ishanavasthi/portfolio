@@ -16,7 +16,9 @@ export const metadata: Metadata = {
     default: `${site.name} - ${site.title}`,
     template: `%s - ${site.name}`,
   },
-  description: site.description,
+  description: site.metaDescription,
+  authors: [{ name: site.name, url: site.url }],
+  creator: site.name,
   // Defaults for routes without their own metadata (e.g. the 404). No
   // canonical or og:url here: those are per page, via pageMetadata.
   alternates: { types: rssAlternate },
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: "en_US",
     title: `${site.name} - ${site.title}`,
-    description: site.description,
+    description: site.metaDescription,
   },
   twitter: { card: "summary_large_image" },
 };

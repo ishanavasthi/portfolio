@@ -4,6 +4,9 @@ export const site = {
   title: "AI Engineer",
   description:
     "I build LLM-powered systems, agentic workflows, and developer tools.",
+  /** For <meta name="description">: link previews (LinkedIn) want 100+ chars. */
+  metaDescription:
+    "AI engineer and BITS Pilani CS undergrad building LLM agents, RAG systems, agent evals and developer tools. Open to AI engineering roles.",
   url: "https://ishanavasthi.in",
   location: "IND · BITS Pilani",
   status: "open to AI engineering roles",

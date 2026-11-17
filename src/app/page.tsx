@@ -13,7 +13,7 @@ import { Contact } from "@/components/sections/contact";
 
 export const metadata: Metadata = pageMetadata({
   title: `${site.name} - ${site.title}`,
-  description: site.description,
+  description: site.metaDescription,
   path: "/",
 });
 
