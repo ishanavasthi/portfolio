@@ -3,11 +3,25 @@ import Link from "next/link";
 import { getAllPosts, formatPostDate } from "@/lib/blog";
 import { BackLink } from "@/components/layout/back-link";
 import { SectionHead } from "@/components/layout/section-head";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbNode, graph, pageMetadata } from "@/lib/seo";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Notes on AI engineering, LLM apps, and developer tooling.",
+  ...pageMetadata({
+    title: `Blog - ${site.name}`,
+    description: "Notes on AI engineering, LLM apps, and developer tooling.",
+    path: "/blog",
+  }),
 };
+
+const jsonLd = graph(
+  breadcrumbNode([
+    { name: site.name, path: "/" },
+    { name: "Blog", path: "/blog" },
+  ]),
+);
 
 export default function BlogIndexPage() {
   const posts = getAllPosts();
@@ -15,10 +29,11 @@ export default function BlogIndexPage() {
   return (
     <section className="px-4 py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-3xl">
+        <JsonLd data={jsonLd} />
         <BackLink />
 
         <div className="mt-10">
-          <SectionHead index="01" title="Blog" />
+          <SectionHead index="01" title="Blog" as="p" />
         </div>
         <h1 className="text-foreground -mt-6 text-3xl font-semibold tracking-[-0.01em] md:text-4xl">
           Writing

@@ -54,6 +54,39 @@ function matchesTags(project: Project, selected: readonly Tag[]) {
   );
 }
 
+type FilterState = { domain: DomainFilter; tags: readonly Tag[] };
+
+const UNFILTERED: FilterState = { domain: "all", tags: [] };
+
+function parseFilters(params: URLSearchParams): FilterState {
+  const rawDomain = params.get("domain");
+  const domain =
+    rawDomain && VALID_DOMAINS.has(rawDomain) ? (rawDomain as DomainId) : "all";
+  const rawTags = params.get("tag");
+  const tags = rawTags
+    ? rawTags.split(",").filter((t): t is Tag => VALID_TAGS.has(t))
+    : [];
+  return { domain, tags };
+}
+
+/**
+ * Reads the URL and reports it up. `useSearchParams` makes Next skip
+ * prerendering up to the nearest Suspense boundary, so it lives in this empty
+ * leaf with its own boundary: the full, unfiltered project list stays in the
+ * static HTML for crawlers that don't run JavaScript.
+ */
+function FilterParams({
+  onChange,
+}: {
+  onChange: (filters: FilterState) => void;
+}) {
+  const searchParams = useSearchParams();
+  React.useEffect(() => {
+    onChange(parseFilters(new URLSearchParams(searchParams.toString())));
+  }, [searchParams, onChange]);
+  return null;
+}
+
 const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 12 },
   show: {
@@ -67,20 +100,12 @@ export function ProjectExplorer() {
   const skipEntrance = useSkipEntrance();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   // The URL is the source of truth, so any filtered view is shareable and
-  // back/forward navigation works without extra bookkeeping.
-  const domain: DomainFilter = (() => {
-    const raw = searchParams.get("domain");
-    return raw && VALID_DOMAINS.has(raw) ? (raw as DomainId) : "all";
-  })();
-
-  const tags: readonly Tag[] = React.useMemo(() => {
-    const raw = searchParams.get("tag");
-    if (!raw) return [];
-    return raw.split(",").filter((t): t is Tag => VALID_TAGS.has(t));
-  }, [searchParams]);
+  // back/forward navigation works without extra bookkeeping. FilterParams
+  // mirrors it into state; the server render is the unfiltered view.
+  const [filters, setFilters] = React.useState<FilterState>(UNFILTERED);
+  const { domain, tags } = filters;
 
   const commit = React.useCallback(
     (next: { domain?: DomainFilter; tags?: readonly Tag[] }) => {
@@ -169,6 +194,9 @@ export function ProjectExplorer() {
 
   return (
     <div className="flex flex-col gap-10">
+      <React.Suspense fallback={null}>
+        <FilterParams onChange={setFilters} />
+      </React.Suspense>
       {isUnfiltered ? (
         <section className="flex flex-col gap-6">
           <SectionLabel>Selected work</SectionLabel>
