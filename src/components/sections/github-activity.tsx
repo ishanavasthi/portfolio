@@ -34,15 +34,6 @@ function utcDate(iso: string) {
   return new Date(`${iso}T00:00:00Z`);
 }
 
-function formatDay(iso: string) {
-  return utcDate(iso).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
-
 function plural(n: number, word: string) {
   return `${n.toLocaleString("en-US")} ${word}${n === 1 ? "" : "s"}`;
 }
@@ -152,9 +143,7 @@ export async function GitHubActivity() {
               height={CELL}
               rx={2}
               style={{ fill: LEVEL_FILL[day.level] }}
-            >
-              <title>{`${day.count === 0 ? "No" : day.count} contribution${day.count === 1 ? "" : "s"} on ${formatDay(day.date)}`}</title>
-            </rect>
+            />
           ))}
         </svg>
       </div>

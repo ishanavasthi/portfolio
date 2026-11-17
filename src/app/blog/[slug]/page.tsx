@@ -7,6 +7,15 @@ import {
   getPost,
 } from "@/lib/blog";
 import { BackLink } from "@/components/layout/back-link";
+import { JsonLd } from "@/components/json-ld";
+import {
+  breadcrumbNode,
+  graph,
+  ids,
+  pageMetadata,
+  shareImageUrl,
+} from "@/lib/seo";
+import { site } from "@/lib/site";
 
 type Params = { slug: string };
 
@@ -23,8 +32,16 @@ export async function generateMetadata({
   const post = getPost(slug);
   if (!post) return { title: "Post not found" };
   return {
-    title: post.title,
-    description: post.summary,
+    // Post titles are long enough on their own; the "- Ishan Avasthi" suffix
+    // pushed them past the 70-character snippet limit.
+    title: { absolute: post.title },
+    ...pageMetadata({
+      title: post.title,
+      description: post.summary,
+      path: `/blog/${slug}`,
+      type: "article",
+      publishedTime: post.date,
+    }),
   };
 }
 
@@ -37,9 +54,34 @@ export default async function BlogPostPage({
   const post = getPost(slug);
   if (!post) notFound();
 
+  const url = `${site.url}/blog/${slug}`;
+  const jsonLd = graph(
+    {
+      "@type": "BlogPosting",
+      "@id": `${url}#post`,
+      headline: post.title,
+      description: post.summary,
+      url,
+      mainEntityOfPage: url,
+      datePublished: post.date,
+      dateModified: post.date,
+      inLanguage: "en",
+      image: shareImageUrl,
+      author: { "@id": ids.person, "@type": "Person", name: site.name },
+      publisher: { "@id": ids.person },
+      isPartOf: { "@id": ids.website },
+    },
+    breadcrumbNode([
+      { name: site.name, path: "/" },
+      { name: "Blog", path: "/blog" },
+      { name: post.title, path: `/blog/${slug}` },
+    ]),
+  );
+
   return (
     <article className="px-4 py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-3xl">
+        <JsonLd data={jsonLd} />
         <BackLink href="/blog" label="back to blog" />
 
         <header className="mt-10 border-b border-border pb-10">

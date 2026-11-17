@@ -1,24 +1,40 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { BackLink } from "@/components/layout/back-link";
 import { SectionHead } from "@/components/layout/section-head";
 import { Reveal } from "@/components/motion/reveal";
 import { ProjectExplorer } from "@/components/projects/project-explorer";
 import { projects } from "@/lib/projects";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbNode, graph, pageMetadata } from "@/lib/seo";
+import { site } from "@/lib/site";
+
+const description = `${projects.length} projects across agent systems, RAG, RL environments, developer tools, and full-stack web.`;
 
 export const metadata: Metadata = {
   title: "Projects",
-  description: `${projects.length} projects across agent systems, RAG, RL environments, developer tools, and full-stack web.`,
+  ...pageMetadata({
+    title: `Projects - ${site.name}`,
+    description,
+    path: "/projects",
+  }),
 };
+
+const jsonLd = graph(
+  breadcrumbNode([
+    { name: site.name, path: "/" },
+    { name: "Projects", path: "/projects" },
+  ]),
+);
 
 export default function ProjectsPage() {
   return (
     <div className="mx-auto max-w-[1080px] px-6 pt-12 pb-20 md:pt-20">
+      <JsonLd data={jsonLd} />
       <BackLink />
 
       <header className="mt-10 flex flex-col gap-6 border-b border-border pb-16">
         <Reveal direction="up">
-          <SectionHead index="00" title="Archive" />
+          <SectionHead index="00" title="Archive" as="p" />
         </Reveal>
         <h1 className="text-foreground text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
           Projects
@@ -35,10 +51,7 @@ export default function ProjectsPage() {
       </header>
 
       <div className="mt-16">
-        {/* ProjectExplorer reads filter state from searchParams. */}
-        <Suspense fallback={null}>
-          <ProjectExplorer />
-        </Suspense>
+        <ProjectExplorer />
       </div>
     </div>
   );
