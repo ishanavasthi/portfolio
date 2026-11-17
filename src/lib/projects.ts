@@ -134,6 +134,12 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: gh("agentgrid"),
     live: "https://link.ishanavasthi.in/agentgrid-demo-video",
+    video: {
+      mp4: "/projects/agentgrid.mp4",
+      webm: "/projects/agentgrid.webm",
+      poster: "/projects/agentgrid-poster.webp",
+      alt: "A swimlane timeline for AgentGrid with ten lanes from Intake to Publisher; the Coder A and Coder B bars, labelled wt-A and wt-B, are filled mint in parallel, the Reviewer lane shows a red cross then a mint tick, and a thin mint playhead stands just before the Integrator bar",
+    },
   },
   {
     slug: "alphadesk",
@@ -173,6 +179,12 @@ export const projects: readonly Project[] = [
     featured: true,
     weight: 2,
     live: "https://link.ishanavasthi.in/swiggy-claw",
+    video: {
+      mp4: "/projects/swiggy-claw.mp4",
+      webm: "/projects/swiggy-claw.webm",
+      poster: "/projects/swiggy-claw-poster.webp",
+      alt: "A chat thread in which an ordering agent's ₹1,940 food cart is refused by a red guard message because food carts have a hard ₹1,000 ceiling and cash-on-delivery orders cannot be cancelled",
+    },
   },
   {
     slug: "reviewgrid",
@@ -188,6 +200,12 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: gh("reviewgrid"),
     live: "https://reviewgrid-915b1bbc.base44.app",
+    video: {
+      mp4: "/projects/reviewgrid.mp4",
+      webm: "/projects/reviewgrid.webm",
+      poster: "/projects/reviewgrid-poster.webp",
+      alt: "A unified diff of examples/sample-flawed.ts with five issues connected to lines 7 to 11: eqeqeq, valid-typeof and no-var from static analysis, out-of-bounds-access and undefined-dereference from the model, under a red fail 15/100 verdict stamp",
+    },
   },
   {
     slug: "panorama",
@@ -202,6 +220,12 @@ export const projects: readonly Project[] = [
     weight: 2,
     github: "https://github.com/ishanavasthi/panorama/tree/v2",
     live: "https://link.ishanavasthi.in/panorama-video",
+    video: {
+      mp4: "/projects/panorama.mp4",
+      webm: "/projects/panorama.webm",
+      poster: "/projects/panorama-poster.webp",
+      alt: "A terminal showing the command panorama review acmepanorama/acme-api#1 --fail-on high, a HIGH contract_break finding citing acme-web/src/api/links.ts:11 with a check mark, a second citation acme-web/src/render.ts:48 struck through in red, the line 1 finding discarded during host validation: no supporting evidence resolved to a real file and line, and exit 5",
+    },
   },
   {
     slug: "pr-review-bot",
@@ -228,6 +252,12 @@ export const projects: readonly Project[] = [
     year: 2026,
     weight: 2,
     github: gh("personalized-message-router"),
+    video: {
+      mp4: "/projects/personalized-message-router.mp4",
+      webm: "/projects/personalized-message-router.webm",
+      poster: "/projects/personalized-message-router-poster.webp",
+      alt: "A sorting board with three columns headed NOTIFY, DIGEST and MUTE; five message cards are already sorted and a sixth card from a trusted contact asking for a 6-digit code sits inside a red band labelled safety gate, blind to engagement history, about to drop into MUTE",
+    },
   },
   {
     slug: "composio-research",
@@ -269,6 +299,12 @@ export const projects: readonly Project[] = [
     year: 2026,
     weight: 2,
     github: gh("lenny-growth-assistant"),
+    video: {
+      mp4: "/projects/lenny-growth-assistant.mp4",
+      webm: "/projects/lenny-growth-assistant.webm",
+      poster: "/projects/lenny-growth-assistant-poster.webp",
+      alt: "Reader view of a cited answer about pricing from Naomi Ionita, with an opened citation chip expanded into a scrub rule whose playhead sits at 18:45 above the YouTube URL ending in t=1125s",
+    },
   },
   {
     slug: "ChatWithPDF",
@@ -378,6 +414,12 @@ export const projects: readonly Project[] = [
     year: 2026,
     weight: 2,
     github: gh("kv-cache"),
+    video: {
+      mp4: "/projects/kv-cache.mp4",
+      webm: "/projects/kv-cache.webm",
+      poster: "/projects/kv-cache-poster.webp",
+      alt: "A load-test command in monospace above a full mint progress rule and a large counter reading 13,348 req/s, with p95 8.1 ms, p99 9.6 ms and 0 failed underneath",
+    },
   },
 
   // ─── Full-Stack & Web ──────────────────────────────────────────────────
@@ -403,6 +445,12 @@ export const projects: readonly Project[] = [
     featured: true,
     weight: 2,
     github: gh("verdict-desk"),
+    video: {
+      mp4: "/projects/verdict-desk.mp4",
+      webm: "/projects/verdict-desk.webm",
+      poster: "/projects/verdict-desk-poster.webp",
+      alt: "Three pill-shaped states DRAFT, PENDING_REVIEW and APPROVED joined by arrows, a struck-through dashed shortcut arc from DRAFT to APPROVED above them, and below them a psql UPDATE statement followed by the red line ERROR: illegal answer state transition: DRAFT -> APPROVED",
+    },
   },
   {
     slug: "fintracker",
