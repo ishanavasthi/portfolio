@@ -25,7 +25,11 @@ export const BIO = [
 ] as const;
 
 export function header(): string {
-  return [`# ${site.name}`, "", `> ${site.title} — ${site.description}`].join("\n");
+  return [
+    `# ${site.name}`,
+    "",
+    `> ${site.title} and CS undergrad at BITS Pilani, India, ${site.status}. ${site.description}`,
+  ].join("\n");
 }
 
 export function profileLines(): string[] {

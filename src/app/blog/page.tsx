@@ -4,20 +4,35 @@ import { getAllPosts, formatPostDate } from "@/lib/blog";
 import { BackLink } from "@/components/layout/back-link";
 import { SectionHead } from "@/components/layout/section-head";
 import { JsonLd } from "@/components/json-ld";
-import { breadcrumbNode, graph, pageMetadata } from "@/lib/seo";
+import { breadcrumbNode, collectionNode, graph, pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
+
+const description =
+  "Notes on AI engineering, LLM apps, and developer tooling: long-form write-ups on building, testing and shipping AI agents.";
 
 export const metadata: Metadata = {
   title: "Blog",
   ...pageMetadata({
     title: `Blog - ${site.name}`,
-    description:
-      "Notes on AI engineering, LLM apps, and developer tooling: long-form write-ups on building, testing and shipping AI agents.",
+    description,
     path: "/blog",
   }),
 };
 
 const jsonLd = graph(
+  collectionNode({
+    type: "Blog",
+    path: "/blog",
+    name: `Blog - ${site.name}`,
+    description,
+    items: getAllPosts().map((p) => ({
+      "@type": "BlogPosting",
+      "@id": `${site.url}/blog/${p.slug}#post`,
+      headline: p.title,
+      url: `${site.url}/blog/${p.slug}`,
+      datePublished: p.date,
+    })),
+  }),
   breadcrumbNode([
     { name: site.name, path: "/" },
     { name: "Blog", path: "/blog" },

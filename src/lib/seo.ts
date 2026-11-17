@@ -50,7 +50,14 @@ export function pageMetadata({
   return {
     description,
     // Setting `alternates` replaces the layout's, so the feed link is repeated.
-    alternates: { canonical: path, types: rssAlternate },
+    alternates: {
+      canonical: path,
+      types: {
+        ...rssAlternate,
+        // Served by src/middleware.ts from src/app/md.
+        "text/markdown": `${path === "/" ? "/index" : path}.md`,
+      },
+    },
     openGraph: {
       type,
       siteName: site.name,
@@ -107,6 +114,46 @@ export function breadcrumbNode(trail: { name: string; path: string }[]) {
       name: crumb.name,
       item: `${site.url}${crumb.path}`,
     })),
+  };
+}
+
+/** A list page: what it is, where it sits, and the items on it. */
+export function collectionNode({
+  type,
+  path,
+  name,
+  description,
+  items,
+}: {
+  type: "CollectionPage" | "Blog";
+  path: string;
+  name: string;
+  description: string;
+  items: object[];
+}) {
+  const url = `${site.url}${path}`;
+  return {
+    "@type": type,
+    "@id": `${url}#page`,
+    url,
+    name,
+    description,
+    inLanguage: "en",
+    isPartOf: { "@id": ids.website },
+    author: { "@id": ids.person },
+    ...(type === "Blog"
+      ? { blogPost: items }
+      : {
+          mainEntity: {
+            "@type": "ItemList",
+            numberOfItems: items.length,
+            itemListElement: items.map((item, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              item,
+            })),
+          },
+        }),
   };
 }
 
