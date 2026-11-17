@@ -15,6 +15,18 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      {
+        // The old Hashnode blog is retired; its posts weren't carried over, so
+        // every URL on that host lands on the current blog index.
+        source: "/:path*",
+        has: [{ type: "host", value: "blog.ishanavasthi.in" }],
+        destination: "https://ishanavasthi.in/blog",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
