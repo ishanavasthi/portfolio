@@ -34,7 +34,7 @@ const homeJsonLd = graph(
     name: `${site.name} - ${site.title}`,
     isPartOf: { "@id": ids.website },
     mainEntity: { "@id": ids.person },
-    dateModified: ACTIVITY_SYNCED_AT.slice(0, 10),
+    dateModified: ACTIVITY_SYNCED_AT,
   },
   personNode,
 );
